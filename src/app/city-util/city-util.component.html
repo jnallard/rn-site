@@ -1,12 +1,23 @@
-<div class="container-fluid">
-  <h1>Cities <button class="btn btn-primary" (click)="loadData()" disabled>Reload</button></h1>
+<div class="container-fluid mt-3">
   <div class="row">
-    <div class="col-3" *ngFor="let city of cities">
-      <div class="card" (click)=selectCity(city)>
-        <div class="card-body">
-          <h5 class="card-title">{{city.name}} - <small>{{city.getPercentDone()}}%</small></h5>
-          <h6 class="card-subtitle mb-2 text-muted">Required Goods</h6>
-          <app-rg-chart *ngIf="city?.rgs" [city]="city"></app-rg-chart>
+    <div class="col-3">
+      <ul class="list-group city-list">
+        <li class="list-group-item clickable" *ngFor="let city of cities" [ngClass]="{'active': city.selected}" (click)="toggleCity(city)">{{city.name}}</li>
+      </ul>
+    </div>
+    <div class="col-9">
+      <h1>Cities <button class="btn btn-primary" (click)="loadData()">Reload</button></h1>
+      <div class="row">
+        <div class="col-4" *ngFor="let city of visibleCities">
+          <div class="card mb-3" (click)=selectCity(city)>
+            <div class="card-body">
+              <h5 class="card-title">{{city.name}} - <small>{{city.getPercentDone()}}%</small></h5>
+              <h6 class="card-subtitle mb-2 text-muted">Required Goods</h6>
+              <span *ngIf="city.loading">Loading...</span>
+              <app-rg-chart *ngIf="city?.rgs && !city.loading" [city]="city"></app-rg-chart>
+              <small>*this good falls off next</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>

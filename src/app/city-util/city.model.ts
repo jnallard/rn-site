@@ -5,6 +5,14 @@ import { Md5 } from 'ts-md5/dist/md5';
 export class City {
     rgs: RequiredGood[] | null = null;
     hash: string;
+    loading = false;
+
+    get selected(): boolean {
+        return localStorage.getItem(`city-selected-${this.name}`) == 'true';
+    }
+    set selected(value: boolean) {
+        localStorage.setItem(`city-selected-${this.name}`, value ? 'true' : 'false');
+    }
 
     constructor(public name: string, public id: string) {
         this.hash = Md5.hashAsciiStr(`["${id}"]`);

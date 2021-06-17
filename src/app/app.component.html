@@ -31,10 +31,18 @@
       </li>
     </ul>
     <ul class="navbar-nav navbar-right">
-      <input class="form-control me-2" type="text" name="server" placeholder="Server" aria-label="Server"
-        [(ngModel)]="settings.server">
-      <input class="form-control me-2" type="text" name="cookie" placeholder="Cookie" aria-label="Cookie"
-        [(ngModel)]="settings.cookie">
+      <div class="input-group mr-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Server</span>
+        </div>
+        <input type="text" class="form-control" name="server" [(ngModel)]="settings.server">
+      </div>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Cookie</span>
+        </div>
+        <input type="text" class="form-control" name="cookie" [(ngModel)]="settings.cookie">
+      </div>
     </ul>
   </div>
 </nav>
@@ -55,6 +63,6 @@
     <button type="submit" class="btn btn-primary" (click)="setSettings()">Submit</button>
   </form>
 </div>
-<div *ngIf="settings.cookie">
+<div *ngIf="settings.cookie && settings.server">
   <router-outlet></router-outlet>
 </div>
