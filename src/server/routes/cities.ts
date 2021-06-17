@@ -13,10 +13,13 @@ router.get('/', function(req, res, next) {
     data: {"client":1,"checksum":-1,"parameters":[req.query.param],"hash":req.query.hash},
     headers: { cookie: req.query.cookie}
   }).then(r => {
-    console.log(r.data);
+    if (r.data.Errorcode == 1) {
+      res.statusCode = 400;
+      res.send({error: "Unable to connect to Rail Nation server"});
+      return;
+    }
     res.send(r.data);
   }).catch(error => {
-    console.error(error);
     res.send(error);
   });
 });

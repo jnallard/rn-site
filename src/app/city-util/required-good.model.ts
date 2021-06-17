@@ -1,0 +1,25 @@
+import { Resource } from "../shared/models/resource.model";
+import { Resources } from "./resource.util";
+
+export class RequiredGood {
+    name: string;
+    id: number;
+    amountDelivered: number;
+    percentDelivered: number;
+    maxAmount: number;
+    goalAmount: number;
+    consumptionPercent: number;
+    playerRank: number;
+
+    constructor(resource: Resource) {
+        this.name = Resources.getResource(resource.ResourceId);
+        this.id = resource.ResourceId;
+        this.amountDelivered = resource.Amount;
+        this.playerRank = resource.PositionOfPlayer;
+        this.consumptionPercent = resource.ConsumptionAmount; 
+        this.maxAmount = resource.Limit;
+        this.goalAmount = (resource.Limit * 0.67) * (1 + resource.ConsumptionAmount);
+        this.percentDelivered = Math.min(Math.floor((resource.Amount / this.goalAmount) * 1000)/10, 100);
+        console.log(this);
+    }
+}

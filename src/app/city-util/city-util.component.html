@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <h1>Cities <button class="btn btn-primary" (click)="loadData()" disabled>Reload</button></h1>
+  <div class="row">
+    <div class="col-3" *ngFor="let city of cities">
+      <div class="card" (click)=selectCity(city)>
+        <div class="card-body">
+          <h5 class="card-title">{{city.name}} - <small>{{city.getPercentDone()}}%</small></h5>
+          <h6 class="card-subtitle mb-2 text-muted">Required Goods</h6>
+          <app-rg-chart *ngIf="city?.rgs" [city]="city"></app-rg-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

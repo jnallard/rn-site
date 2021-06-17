@@ -1,43 +1,60 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" routerLink="/home">RN Site</a>
-    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-expanded="false">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" [collapse]="isCollapsed">
-      <ul class="navbar-nav mr-auto">
-        <a class="nav-link" routerLink="/home" routerLinkActive="active">
-          Home <span class="sr-only">(current)</span>
+  <a class="navbar-brand" routerLink="/home">RN Site</a>
+  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-expanded="false">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent" [collapse]="isCollapsed">
+    <ul class="navbar-nav mr-auto">
+      <a class="nav-link" routerLink="/home" routerLinkActive="active">
+        Home <span class="sr-only">(current)</span>
+      </a>
+      <li class="nav-item dropdown" dropdown>
+        <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
+          Cities
         </a>
-        <li class="nav-item dropdown" dropdown>
-          <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
-            Games
-          </a>
-          <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
-              role="menu" aria-labelledby="button-basic">
-            <li role="menuitem" class="dropdown-item clickable" routerLink="/games/all" routerLinkActive="active">
-              <a>All Games</a>
-            </li>
-            <li class="divider dropdown-divider"></li>
-            <li *ngFor="let game of gameList.games" role="menuitem" class="dropdown-item clickable" routerLink="/{{game.path}}" routerLinkActive="active">
-              <a>{{game.name}}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown" dropdown>
-          <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
-            Tools
-          </a>
-          <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-            <li role="menuitem" class="dropdown-item clickable" routerLink="/test-pages/camera" routerLinkActive="active">
-              <a>Camera Test</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="navbar-nav navbar-right">
-        <app-auth-button></app-auth-button>
-      </ul>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          <li role="menuitem" class="dropdown-item clickable" routerLink="/city-util" routerLinkActive="active">
+            <a>All Cities</a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown" dropdown>
+        <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
+          Tools
+        </a>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          <li role="menuitem" class="dropdown-item clickable" routerLink="/test-pages/camera" routerLinkActive="active">
+            <a>Camera Test</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav navbar-right">
+      <input class="form-control me-2" type="text" name="server" placeholder="Server" aria-label="Server"
+        [(ngModel)]="settings.server">
+      <input class="form-control me-2" type="text" name="cookie" placeholder="Cookie" aria-label="Cookie"
+        [(ngModel)]="settings.cookie">
+    </ul>
+  </div>
+</nav>
+<div class="container" *ngIf="!settings.cookie || !settings.server">
+  <h1>Welcome to RN Site!</h1>
+  <p>In order to use this service, you must enter a valid cookie and server.</p>
+  <form>
+    <div class="form-group">
+      <label for="cookieInput">Cookie</label>
+      <input type="text" class="form-control" id="cookieInput" name="cookieInput" aria-describedby="cookieHelp" placeholder="Enter cookie" [(ngModel)]="cookie">
+      <small id="cookieHelp" class="form-text text-muted">The cookie from the server. Type `document.cookie` into dev tools console and remove the quotes.</small>
     </div>
-  </nav>
-<router-outlet></router-outlet>
+    <div class="form-group">
+      <label for="serverInput">Server</label>
+      <input type="text" class="form-control" id="serverInput" name="serverInput" aria-describedby="serverHelp" placeholder="Enter server name" [(ngModel)]="server">
+      <small id="serverHelp" class="form-text text-muted">The server name in the url. For example, `com5`.</small>
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="setSettings()">Submit</button>
+  </form>
+</div>
+<div *ngIf="settings.cookie">
+  <router-outlet></router-outlet>
+</div>

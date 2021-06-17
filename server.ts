@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as path from 'path';
 import * as cors from 'cors';
 import { CityRouter } from './src/server/routes/cities';
+import { RnProxy } from './src/server/routes/rnProxy';
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/cities', CityRouter.cityRouter);
+app.use('/proxy', RnProxy.proxyRouter);
 
 // Serve only the static files from the dist directory
 app.use(express.static(__dirname + '/dist/my-app'));

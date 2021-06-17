@@ -10,10 +10,13 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppComponent } from './app.component';
-import { AuthButtonComponent } from './auth/auth-button/auth-button.component';
 import { HomeComponent } from './home/home.component';
 import { ConfirmationModalComponent } from './shared/components/confirmation-modal/confirmation-modal.component';
-import { PressDirective } from './shared/directives/press.directive';
+import { CityUtilComponent } from './city-util/city-util.component';
+import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 
 const appRoutes: Routes = [
@@ -21,17 +24,18 @@ const appRoutes: Routes = [
     redirectTo: '/home',
     pathMatch: 'full'
   },
-  { path: 'home', component: HomeComponent }
+  { path: 'home', component: HomeComponent },
+  { path: 'city-util', component: CityUtilComponent }
 ];
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    CityUtilComponent,
     HomeComponent,
-    PressDirective,
     ConfirmationModalComponent,
-    AuthButtonComponent
+    RgChartComponent
   ],
   imports: [
     AuthModule.forRoot({
@@ -50,7 +54,10 @@ const appRoutes: Routes = [
     CarouselModule.forRoot(),
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
-    NgbModule
+    BrowserAnimationsModule,
+    HttpClientModule,
+    NgbModule,
+    NgApexchartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
