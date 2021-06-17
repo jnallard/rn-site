@@ -35,26 +35,37 @@ export class RgChartComponent implements OnInit {
     console.log(this.city);
     let firstRg = this.city?.rgs?.[0];
     if(firstRg) {
-      firstRg.name = `${firstRg.name}*`
+      firstRg.name = `${firstRg.name}*`;
     }
     const dataPoints = this.city?.rgs?.map(rg => {
+      let goalAfterConsumption = rg.maxAmount * 0.67;
+      let goalBeforeConsumption = Math.ceil(goalAfterConsumption * (1 + rg.consumptionPercent));
+      let fillColor = "#00E396";
+      if(rg.amountDelivered < goalAfterConsumption) {
+        fillColor = '#d93300'
+      }
+      else if(rg.amountDelivered < goalBeforeConsumption) {
+        fillColor = '#d9a600'
+      }
       return {
         x: rg.name,
         y: rg.amountDelivered,
         goals: [
           {
             name: "Goal Before Consumption",
-            value: Math.ceil((rg.maxAmount * 0.67) * (1 + rg.consumptionPercent)),
+            value: goalBeforeConsumption,
             strokeWidth: 5,
             strokeColor: "#775DD0"
           },
           {
             name: "Goal After Consumption",
-            value: rg.maxAmount * 0.67,
+            value: goalAfterConsumption,
             strokeWidth: 5,
             strokeColor: "#0000ff"
-          }
-        ]
+          },
+          
+        ],
+        fillColor
       }
     }) ?? [];
     this.chartOptions = {
@@ -89,9 +100,9 @@ export class RgChartComponent implements OnInit {
       legend: {
         show: true,
         showForSingleSeries: true,
-        customLegendItems: ["Actual", "Goal Before Consumption", "Goal After Consumption"],
+        customLegendItems: ["Goal Before Consumption", "Goal After Consumption"],
         markers: {
-          fillColors: ["#00E396", "#775DD0", "#0000ff"]
+          fillColors: ["#775DD0", "#0000ff"]
         }
       }
     };

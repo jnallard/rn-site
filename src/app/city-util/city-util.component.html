@@ -15,11 +15,11 @@
               <h6 class="card-subtitle mb-2 text-muted">Required Goods</h6>
               <span *ngIf="city.loading">Loading...</span>
               <app-rg-chart *ngIf="city?.rgs && !city.loading" [city]="city"></app-rg-chart>
-              <small>*this good falls off next</small>
             </div>
           </div>
         </div>
       </div>
+      <small class="muted">*this good falls off next</small>
     </div>
   </div>
 </div>

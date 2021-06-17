@@ -77,7 +77,9 @@ export class CityUtilComponent implements OnInit {
     city.selected = !city.selected;
     let errors: string[] = [];
     this.visibleCities = this.cities.filter(city => city.selected);
-    await this.loadCity(city, errors);
+    if(city.selected) {
+      await this.loadCity(city, errors);
+    }
   }
 
   async loadCity(city: City, errors: string[]) {
