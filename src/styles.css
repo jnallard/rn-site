@@ -1,0 +1,42 @@
+/* You can add global styles to this file, and also import other style files */
+/*@import '~bootstrap/dist/css/bootstrap.min.css';*/
+
+.router-page {
+  position: absolute;
+  top: 56px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  padding: 10px;
+  z-index: -1;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.black-text {
+  color: white;
+  background-color: black;
+  padding: 5px;
+  margin-bottom: 0;
+  line-height: 2em;
+}
+
+.white-text {
+  color: black;
+  background-color: white;
+  padding: 2px 4px;
+}
+
+.centered-text {
+  text-align: center;
+}
+
+.left-text {
+  text-align: left;
+}
+
+.right-text {
+  text-align: right;
+}

@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" routerLink="/home">RN Site</a>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" aria-expanded="false">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" [collapse]="isCollapsed">
+      <ul class="navbar-nav mr-auto">
+        <a class="nav-link" routerLink="/home" routerLinkActive="active">
+          Home <span class="sr-only">(current)</span>
+        </a>
+        <li class="nav-item dropdown" dropdown>
+          <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
+            Games
+          </a>
+          <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+              role="menu" aria-labelledby="button-basic">
+            <li role="menuitem" class="dropdown-item clickable" routerLink="/games/all" routerLinkActive="active">
+              <a>All Games</a>
+            </li>
+            <li class="divider dropdown-divider"></li>
+            <li *ngFor="let game of gameList.games" role="menuitem" class="dropdown-item clickable" routerLink="/{{game.path}}" routerLinkActive="active">
+              <a>{{game.name}}</a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown" dropdown>
+          <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
+            Tools
+          </a>
+          <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+            <li role="menuitem" class="dropdown-item clickable" routerLink="/test-pages/camera" routerLinkActive="active">
+              <a>Camera Test</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav navbar-right">
+        <app-auth-button></app-auth-button>
+      </ul>
+    </div>
+  </nav>
+<router-outlet></router-outlet>
