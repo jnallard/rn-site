@@ -17,6 +17,7 @@ import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
 
 
 const appRoutes: Routes = [
@@ -25,7 +26,8 @@ const appRoutes: Routes = [
     pathMatch: 'full'
   },
   { path: 'home', component: HomeComponent },
-  { path: 'city-util', component: CityUtilComponent }
+  { path: 'city-util', component: CityUtilComponent },
+  { path: 'player-ranks', component: PlayerRanksComponent }
 ];
 
 
@@ -35,7 +37,8 @@ const appRoutes: Routes = [
     CityUtilComponent,
     HomeComponent,
     ConfirmationModalComponent,
-    RgChartComponent
+    RgChartComponent,
+    PlayerRanksComponent
   ],
   imports: [
     AuthModule.forRoot({

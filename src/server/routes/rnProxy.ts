@@ -13,6 +13,7 @@ router.get('/', function(req, res, next) {
   const cookie = req.query.cookie;
   const urlQueryPath = req.query.urlQueryPath;
   const hash = Md5.hashAsciiStr(req.query.param);
+  console.log({ hash });
   
   axios({
     method: "post",
