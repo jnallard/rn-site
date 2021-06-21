@@ -18,8 +18,8 @@
                     <th rowspan="2">Name</th>
                     <th>Total</th>
                     <th>Transports</th>
-                    <th>Competitions</th>
                     <th>Investments</th>
+                    <th>Competitions</th>
                     <th>Train Station</th>
                     <th>Medals</th>
                     <th>Misc.</th>
@@ -41,10 +41,10 @@
                             {{prestige.transportPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.transportPrestigeRank)">{{prestige.transportPrestigeRank}}</small>
                         </td>
                         <td>
-                            {{prestige.compPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.compPrestigeRank)">{{prestige.compPrestigeRank}}</small>
+                            {{prestige.investmentPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.investmentPrestigeRank)">{{prestige.investmentPrestigeRank}}</small>
                         </td>
                         <td>
-                            {{prestige.investmentPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.investmentPrestigeRank)">{{prestige.investmentPrestigeRank}}</small>
+                            {{prestige.compPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.compPrestigeRank)">{{prestige.compPrestigeRank}}</small>
                         </td>
                         <td>
                             {{prestige.trainStationPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.trainStationPrestigeRank)">{{prestige.trainStationPrestigeRank}}</small>
