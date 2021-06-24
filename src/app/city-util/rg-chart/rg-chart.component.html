@@ -7,5 +7,11 @@
       [colors]="chartOptions.colors"
       [plotOptions]="chartOptions.plotOptions"
     ></apx-chart>
+    <div id="rg-ranks">
+      <div *ngFor="let rg of city.rgs">
+        <small *ngIf="rg.isDeliveredByPlayer" class="badge rounded-pill rank" [ngClass]="getRankClass(rg.playerRank + 1)">#{{rg.playerRank + 1}} ({{rg.prestige}}pp)</small>
+        <small *ngIf="!rg.isDeliveredByPlayer" class="badge rounded-pill badge-warning rank">N/A</small>
+      </div>
+    </div>
   </div>
   

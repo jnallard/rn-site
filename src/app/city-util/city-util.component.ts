@@ -82,11 +82,17 @@ export class CityUtilComponent implements OnInit {
     }
   }
 
-  async loadCity(city: City, errors: string[]) {
+  private async loadCity(city: City, errors: string[]) {
     try {
       city.loading = true;
-      var cityResponse = await this.cityService.getCityDetails(city.id).toPromise();
+      let cityResponse = await this.cityService.getCityDetails(city.id).toPromise();
       city.setCityResponse(cityResponse);
+      console.log(city.id, city.rgs[0], city.rgs[0].id, city.rgs[0].playerRank);
+      for(let rg of city.rgs.filter(rg => rg.isDeliveredByPlayer)) {
+        let prestigeResponse = await this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.playerRank).toPromise();
+        rg.setPrestige(prestigeResponse);
+        console.log(rg);
+      }
       city.loading = false;
     } catch (error) {
       console.error(error);
@@ -95,25 +101,39 @@ export class CityUtilComponent implements OnInit {
     }
   }
 
-  async loadData() {
+  async loadSingleCity(city: City) {
     let errors: string[] = [];
-    this.visibleCities = this.cities.filter(city => city.selected);
-    let tasks = this.visibleCities.map(async city => {
-      try {
-        city.loading = true;
-        var cityResponse = await this.cityService.getCityDetails(city.id).toPromise();
-        city.setCityResponse(cityResponse);
-        city.loading = false;
-      } catch (error) {
-        console.error(error);
-        errors.push(error.error.errorMessage);
-        city.loading = false;
-      }
-    });
-    await Promise.all(tasks);
+    await this.loadCity(city, errors);
+    await new Promise(resolve => setTimeout(resolve, 300));
     console.log(errors);
     if(errors.length) {
       this.modalService.open(ConfirmationModalComponent, `Errors occured while loading city data: ${errors.join(", ")}`)
     }
+  }
+
+  async loadData() {
+    let errors: string[] = [];
+    this.visibleCities = this.cities.filter(city => city.selected);
+    
+    for(let city of this.visibleCities) {
+      await this.loadCity(city, errors);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    console.log(errors);
+    if(errors.length) {
+      this.modalService.open(ConfirmationModalComponent, `Errors occured while loading city data: ${errors.join(", ")}`)
+    }
+  }
+
+  isAnyCityLoading() {
+    return this.visibleCities.some(city => city.loading);
+  }
+
+  getPrestigePoints(city: City) {
+    return city.rgs?.filter(rg => rg?.isDeliveredByPlayer).reduce((sum, nextRg) => sum += nextRg.prestige, 0) ?? 0;
+  }
+
+  getTotalPrestigePoints() {
+    return this.visibleCities.filter(city => !city.loading).reduce((sum, nextCity) => sum += this.getPrestigePoints(nextCity), 0);
   }
 }

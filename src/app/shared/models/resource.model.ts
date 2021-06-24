@@ -4,4 +4,5 @@ export interface Resource {
     ConsumptionAmount: number,
     PositionOfPlayer: number,
     Limit: number,
+    DeliveredByPlayer: boolean,
 }

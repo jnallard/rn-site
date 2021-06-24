@@ -4,6 +4,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 
 export class City {
     rgs: RequiredGood[] | null = null;
+    paxRg: RequiredGood;
     hash: string;
     loading = false;
 
@@ -23,12 +24,20 @@ export class City {
             const storage = cityResponse.Body.StoragesInfo.Storages.find(st => st.ResourceId === rg);
             return new RequiredGood(storage!);
         });
+        let paxStorage = cityResponse.Body.StoragesInfo.Storages.find(st => st.ResourceId === 49);
+        if(paxStorage) {
+            this.paxRg = new RequiredGood(paxStorage!);
+        }
     }
 
     getPercentDone() {
         if(!this.rgs) {
             return -1;
         }
-        return Math.round(this.rgs.reduce((sum, nextRg) => sum += nextRg.percentDelivered, 0) / this.rgs.length);
+        let rgs = this.rgs.slice(0);
+        if(this.paxRg) {
+            rgs.push(this.paxRg);
+        }
+        return Math.round(rgs.reduce((sum, nextRg) => sum += nextRg.percentDelivered, 0) / rgs.length);
     }
 }

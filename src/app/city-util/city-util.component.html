@@ -1,20 +1,27 @@
 <div class="container-fluid mt-3">
   <div class="row">
-    <div class="col-3">
+    <div class="col-2">
       <ul class="list-group city-list">
         <li class="list-group-item clickable" *ngFor="let city of cities" [ngClass]="{'active': city.selected}" (click)="toggleCity(city)">{{city.name}}</li>
       </ul>
     </div>
-    <div class="col-9">
-      <h1>Cities <button class="btn btn-primary" (click)="loadData()">Reload</button></h1>
+    <div class="col-10">
+      <h1>Cities <button class="btn btn-primary float-right" (click)="loadData()">Reload All</button></h1>
+      <h4 class="mb-2">Prestige Points (PP) from Selected Cities: {{getTotalPrestigePoints()}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="isAnyCityLoading()"></i></h4>
       <div class="row">
-        <div class="col-4" *ngFor="let city of visibleCities">
+        <div class="col-sm-12 col-md-6 col-xl-4" *ngFor="let city of visibleCities">
           <div class="card mb-3" (click)=selectCity(city)>
             <div class="card-body">
-              <h5 class="card-title">{{city.name}} - <small>{{city.getPercentDone()}}%</small></h5>
+              <h5 class="card-title">
+                {{city.name}} - <small>{{city.getPercentDone()}}%</small> 
+                <button class="btn btn-primary float-right" (click)="loadSingleCity(city)">Reload</button>
+              </h5>
               <h6 class="card-subtitle mb-2 text-muted">Required Goods</h6>
               <span *ngIf="city.loading">Loading...</span>
               <app-rg-chart *ngIf="city?.rgs && !city.loading" [city]="city"></app-rg-chart>
+            </div>
+            <div class="card-footer text-muted">
+              Total Prestige Points (PP): {{getPrestigePoints(city)}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="city.loading"></i>
             </div>
           </div>
         </div>

@@ -52,13 +52,13 @@ export class RgChartComponent implements OnInit {
         y: rg.amountDelivered,
         goals: [
           {
-            name: "Goal Before Consumption",
+            name: "Demand Before Consumption",
             value: goalBeforeConsumption,
             strokeWidth: 5,
             strokeColor: "#775DD0"
           },
           {
-            name: "Goal After Consumption",
+            name: "Demand After Consumption",
             value: goalAfterConsumption,
             strokeWidth: 5,
             strokeColor: "#0000ff"
@@ -100,12 +100,28 @@ export class RgChartComponent implements OnInit {
       legend: {
         show: true,
         showForSingleSeries: true,
-        customLegendItems: ["Goal Before Consumption", "Goal After Consumption"],
+        customLegendItems: ["Demand Before Consumption", "Demand After Consumption"],
         markers: {
           fillColors: ["#775DD0", "#0000ff"]
         }
       }
     };
+  }
+
+  getRankClass(rank: number) {
+    if(rank == 1) {
+      return 'bg-success';
+    }
+    if(rank == 2) {
+      return 'bg-primary';
+    }
+    if(rank == 3) {
+      return 'bg-info';
+    }
+    if(rank <= 10) {
+      return 'bg-secondary';
+    }
+    return 'bg-light text-dark';
   }
 
 }
