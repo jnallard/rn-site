@@ -73,6 +73,11 @@ export class CityUtilComponent implements OnInit {
     this.loadData().then();
   }
 
+  async selectMany(isSelected: boolean) {
+    this.cities.forEach(city => city.selected = isSelected)
+    await this.loadData();
+  }
+
   async toggleCity(city: City) {
     city.selected = !city.selected;
     let errors: string[] = [];

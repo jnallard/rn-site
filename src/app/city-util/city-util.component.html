@@ -1,6 +1,10 @@
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-2">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-light" (click)="selectMany(true)">Select All</button>
+        <button type="button" class="btn btn-light" (click)="selectMany(false)">Select None</button>
+      </div>
       <ul class="list-group city-list">
         <li class="list-group-item clickable" *ngFor="let city of cities" [ngClass]="{'active': city.selected}" (click)="toggleCity(city)">{{city.name}}</li>
       </ul>
