@@ -7,10 +7,22 @@
       [colors]="chartOptions.colors"
       [plotOptions]="chartOptions.plotOptions"
     ></apx-chart>
+    <apx-chart
+      [series]="paxChartOptions.series"
+      [chart]="paxChartOptions.chart"
+      [legend]="paxChartOptions.legend"
+      [dataLabels]="paxChartOptions.dataLabels"
+      [colors]="paxChartOptions.colors"
+      [plotOptions]="paxChartOptions.plotOptions"
+    ></apx-chart>
     <div id="rg-ranks">
       <div *ngFor="let rg of city.rgs">
         <small *ngIf="rg.isDeliveredByPlayer" class="badge rounded-pill rank" [ngClass]="getRankClass(rg.playerRank + 1)">#{{rg.playerRank + 1}} ({{rg.prestige}}pp)</small>
         <small *ngIf="!rg.isDeliveredByPlayer" class="badge rounded-pill badge-warning rank">N/A</small>
+      </div>
+      <div *ngIf="city.paxRg as rg">
+        <small *ngIf="rg.isDeliveredByPlayer" class="badge rounded-pill rank last" [ngClass]="getRankClass(rg.playerRank + 1)">#{{rg.playerRank + 1}} ({{rg.prestige}}pp)</small>
+        <small *ngIf="!rg.isDeliveredByPlayer" class="badge rounded-pill badge-warning rank last">N/A</small>
       </div>
     </div>
   </div>

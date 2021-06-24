@@ -15,6 +15,13 @@ export class City {
         localStorage.setItem(`city-selected-${this.name}`, value ? 'true' : 'false');
     }
 
+    get allRgs() {
+        if(!this.rgs) {
+            return null;
+        }
+        return this.paxRg ? this.rgs.concat([this.paxRg]) : this.rgs;
+    }
+
     constructor(public name: string, public id: string) {
         this.hash = Md5.hashAsciiStr(`["${id}"]`);
     }

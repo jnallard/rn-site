@@ -28,6 +28,7 @@ export class RgChartComponent implements OnInit {
   @Input()
   public city: City | null = null;
   public chartOptions: ChartOptions = new ChartOptions();
+  public paxChartOptions: ChartOptions = new ChartOptions();
 
   constructor() { }
 
@@ -76,7 +77,7 @@ export class RgChartComponent implements OnInit {
         }
       ],
       chart: {
-        height: 350,
+        height: 300,
         type: "bar"
       },
       plotOptions: {
@@ -106,6 +107,66 @@ export class RgChartComponent implements OnInit {
         }
       }
     };
+    if(this.city.paxRg) {
+      const paxDataPoints = [this.city?.paxRg].map(rg => {
+        let demand = rg.maxAmount;
+        let fillColor = "#00E396";
+        if(rg.amountDelivered < demand) {
+          fillColor = '#d93300'
+        }
+        return {
+          x: rg.name,
+          y: rg.amountDelivered,
+          goals: [
+            {
+              name: "Demand",
+              value: demand,
+              strokeWidth: 5,
+              strokeColor: "#775DD0"
+            }            
+          ],
+          fillColor
+        }
+      }) ?? [];
+      this.paxChartOptions = {
+        series: [
+          {
+            name: "Actual",
+            data: paxDataPoints,
+          }
+        ],
+        chart: {
+          height: 135,
+          type: "bar"
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+        },
+        colors: ["#00E396"],
+        dataLabels: {
+          formatter: function (val, opts) {
+            const goals =
+              opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex]
+                .goals;
+  
+            if (goals && goals.length) {
+              return `${val} / ${goals[0].value}`;
+            }
+            return val as number;
+          }
+        },
+        legend: {
+          show: true,
+          showForSingleSeries: true,
+          customLegendItems: ["Demand"],
+          markers: {
+            fillColors: ["#775DD0"]
+          }
+        }
+      };
+    }
   }
 
   getRankClass(rank: number) {
