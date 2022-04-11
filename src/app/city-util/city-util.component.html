@@ -14,7 +14,7 @@
       <h4 class="mb-2">Prestige Points (PP) from Selected Cities: {{getTotalPrestigePoints()}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="isAnyCityLoading()"></i></h4>
       <div class="row">
         <div class="col-sm-12 col-md-6 col-xl-4" *ngFor="let city of visibleCities">
-          <div class="card mb-3" (click)=selectCity(city)>
+          <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">
                 {{city.name}} - <small>{{city.getPercentDone()}}%</small> 

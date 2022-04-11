@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { SettingsService } from './shared/services/settings.service';
 
 @Component({
@@ -13,9 +13,22 @@ export class AppComponent {
   public cookie = '';
   public server = '';
 
-  constructor(private router: Router, public settings: SettingsService) {
+  constructor(router: Router, public settings: SettingsService) {
     router.events.subscribe(event => {
       this.isCollapsed = true;
+      if(event instanceof NavigationStart && location.hash) {
+        var params = new URLSearchParams(location.hash.substring(1));
+        params.forEach(a => console.log(a)) ;
+
+        if(params.has('server')) {
+          this.server = params.get('server');
+        }
+
+        if(params.has('cookie')) {
+          this.cookie = atob(params.get('cookie'));
+        }
+        this.setSettings();
+      }
     });
   }
 
