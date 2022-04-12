@@ -77,8 +77,11 @@ export class RgChartComponent implements OnInit {
         }
       ],
       chart: {
-        height: 300,
-        type: "bar"
+        height: 200,
+        type: "bar",
+        toolbar: {
+          show: false
+        },
       },
       plotOptions: {
         bar: {
@@ -99,7 +102,7 @@ export class RgChartComponent implements OnInit {
         }
       },
       legend: {
-        show: true,
+        show: false,
         showForSingleSeries: true,
         customLegendItems: ["Demand Before Consumption", "Demand After Consumption"],
         markers: {
@@ -136,8 +139,11 @@ export class RgChartComponent implements OnInit {
           }
         ],
         chart: {
-          height: 135,
-          type: "bar"
+          height: 105,
+          type: "bar",
+          toolbar: {
+            show: false
+          },
         },
         plotOptions: {
           bar: {
@@ -158,7 +164,7 @@ export class RgChartComponent implements OnInit {
           }
         },
         legend: {
-          show: true,
+          show: false,
           showForSingleSeries: true,
           customLegendItems: ["Demand"],
           markers: {

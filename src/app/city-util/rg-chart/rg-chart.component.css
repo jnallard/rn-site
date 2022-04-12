@@ -1,17 +1,26 @@
 #chart {
     position: relative;
+    max-height: 260px;
 }
 
 #rg-ranks {
     position: absolute;
-    top: 44px;
-    right: -15px;
+    top: 25px;
+    right: -5px;
 }
 
 .rank {
-    margin-bottom: 32px;
+    margin-bottom: 10px;
 }
 
 .rank.last {
-    margin-top: 99px;
+    margin-top: 57px;
+}
+
+.top-chart {
+    top: -10px;
+}
+
+.bottom-chart {
+    top: -45px;
 }

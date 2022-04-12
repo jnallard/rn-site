@@ -6,3 +6,9 @@
     max-height: calc(100vh - 130px);
     overflow-y: auto;
 }
+
+.reload-button {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 0.7em;
+}
