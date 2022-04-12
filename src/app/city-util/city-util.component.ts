@@ -4,6 +4,10 @@ import { CityService } from '../shared/services/city.service';
 import { ModalService } from '../shared/services/modal.service';
 import { City } from './city.model';
 
+enum SortMode {
+  Alpha = 'alpha', Growth = 'growth'
+}
+
 @Component({
   selector: 'app-city-util',
   templateUrl: './city-util.component.html',
@@ -12,6 +16,17 @@ import { City } from './city.model';
 export class CityUtilComponent implements OnInit {
 
   constructor(private cityService: CityService, private modalService: ModalService) { }
+
+  SortMode = SortMode;
+  _sortMode = localStorage.getItem('cities.sortMode') as SortMode ?? SortMode.Alpha;
+  get sortMode() {
+    return this._sortMode;
+  }
+  set sortMode(mode: SortMode) {
+    this._sortMode = mode;
+    localStorage.setItem('cities.sortMode', mode);
+    this.sortCities();
+  }
 
   visibleCities: City[] = [];
 
@@ -80,10 +95,9 @@ export class CityUtilComponent implements OnInit {
 
   async toggleCity(city: City) {
     city.selected = !city.selected;
-    let errors: string[] = [];
     this.visibleCities = this.cities.filter(city => city.selected);
     if(city.selected) {
-      await this.loadCity(city, errors);
+      await this.loadSingleCity(city);
     }
   }
 
@@ -110,6 +124,7 @@ export class CityUtilComponent implements OnInit {
     let errors: string[] = [];
     await this.loadCity(city, errors);
     await new Promise(resolve => setTimeout(resolve, 300));
+    this.sortCities();
     console.log(errors);
     if(errors.length) {
       this.modalService.open(ConfirmationModalComponent, `Errors occured while loading city data: ${errors.join(", ")}`)
@@ -124,9 +139,21 @@ export class CityUtilComponent implements OnInit {
       await this.loadCity(city, errors);
       await new Promise(resolve => setTimeout(resolve, 300));
     }
+    this.sortCities();
     console.log(errors);
     if(errors.length) {
       this.modalService.open(ConfirmationModalComponent, `Errors occured while loading city data: ${errors.join(", ")}`)
+    }
+  }
+
+  sortCities() {
+    switch(this.sortMode) {
+      case SortMode.Alpha:
+        this.visibleCities.sort((a, b) => a.name.localeCompare(b.name));
+        return;
+      case SortMode.Growth:
+        this.visibleCities.sort((a, b) => b.getPercentDone() - a.getPercentDone());
+        return;
     }
   }
 

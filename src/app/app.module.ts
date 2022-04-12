@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthModule } from '@auth0/auth0-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
@@ -53,6 +54,7 @@ const appRoutes: Routes = [
     ),
     BrowserModule,
     BsDropdownModule.forRoot(),
+    ButtonsModule.forRoot(),
     CollapseModule.forRoot(),
     CarouselModule.forRoot(),
     TooltipModule.forRoot(),
