@@ -7,28 +7,14 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent" [collapse]="isCollapsed">
     <ul class="navbar-nav mr-auto">
       <a class="nav-link" routerLink="/home" routerLinkActive="active">
-        Home <span class="sr-only">(current)</span>
+        Home
       </a>
-      <li class="nav-item dropdown" dropdown>
-        <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
-          Cities
-        </a>
-        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-          <li role="menuitem" class="dropdown-item clickable" routerLink="/city-util" routerLinkActive="active">
-            <a>All Cities</a>
-          </li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown" dropdown>
-        <a class="nav-link dropdown-toggle clickable" dropdownToggle id="navbarDropdown">
-          Players
-        </a>
-        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
-          <li role="menuitem" class="dropdown-item clickable" routerLink="/player-ranks" routerLinkActive="active">
-            <a>Player Rankings</a>
-          </li>
-        </ul>
-      </li>
+      <a class="nav-link" routerLink="/city-util" routerLinkActive="active">
+        Cities
+      </a>
+      <a class="nav-link" routerLink="/player-ranks" routerLinkActive="active">
+        Players
+      </a>
     </ul>
     <ul class="navbar-nav navbar-right">
       <div class="input-group mr-3">
