@@ -16,6 +16,8 @@
             <div class="btn-group" btnRadioGroup [(ngModel)]="sortMode">
               <label class="btn btn-light mb-0" btnRadio="alpha">Alphabetical</label>
               <label class="btn btn-light mb-0" btnRadio="growth">Growth</label>
+              <label class="btn btn-light mb-0" btnRadio="level">Level</label>
+              <label class="btn btn-light mb-0" btnRadio="prestige">Prestige</label>
             </div>
             <button class="btn btn-primary ml-3" (click)="loadData()">Reload All</button>
           </div>
@@ -27,7 +29,7 @@
           <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">
-                {{city.name}} - <small>{{city.getPercentDone()}}%</small> - <small>PP: {{getPrestigePoints(city)}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="city.loading"></i></small>
+                <div class="circle-bg">{{ city.level }}</div> {{city.name}} <small>{{city.getPercentDone()}}%</small> <small><div class="prestige-bg"><div class="fas fa-star"></div> {{city.getPrestigePoints()}}</div> <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="city.loading"></i></small>
                 <button class="btn btn-primary float-right reload-button" (click)="loadSingleCity(city)">Reload</button>
               </h5>
               <span *ngIf="city.loading">Loading...</span>

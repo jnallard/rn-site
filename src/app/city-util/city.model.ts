@@ -5,6 +5,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 export class City {
     rgs: RequiredGood[] | null = null;
     paxRg: RequiredGood;
+    level: number;
     hash: string;
     loading = false;
 
@@ -35,6 +36,7 @@ export class City {
         if(paxStorage) {
             this.paxRg = new RequiredGood(paxStorage!);
         }
+        this.level = cityResponse.Body.Level;
     }
 
     getPercentDone() {
@@ -46,5 +48,9 @@ export class City {
             rgs.push(this.paxRg);
         }
         return Math.round(rgs.reduce((sum, nextRg) => sum += nextRg.percentDelivered, 0) / rgs.length);
+    }
+
+    getPrestigePoints() {
+      return this.allRgs?.filter(rg => rg?.isDeliveredByPlayer).reduce((sum, nextRg) => sum += nextRg.prestige, 0) ?? 0;
     }
 }

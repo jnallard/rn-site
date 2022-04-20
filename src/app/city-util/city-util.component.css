@@ -12,3 +12,21 @@
     padding-bottom: 2px;
     font-size: 0.7em;
 }
+
+.circle-bg {
+  background: #268036;
+  border-radius: 30px;
+  color: #fff;
+  display: inline-block;
+  padding: 7px;
+}
+
+.prestige-bg {
+  background: #D6D2C5;
+  border-radius: 10px;
+  color: #777;
+  display: inline-block;
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 3px 7px;
+}
