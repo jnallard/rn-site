@@ -33,7 +33,6 @@ export class RgChartComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.city);
     let firstRg = this.city?.rgs?.[0];
     if(firstRg) {
       firstRg.name = `${firstRg.name}*`;

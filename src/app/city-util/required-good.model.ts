@@ -23,8 +23,8 @@ export class RequiredGood {
         this.maxAmount = resource.Limit;
         this.goalAmount = (resource.Limit * 0.67) * (1 + resource.ConsumptionAmount);
         this.percentDelivered = Math.min(Math.floor((resource.Amount / this.goalAmount) * 1000)/10, 100);
-        this.isDeliveredByPlayer = resource.DeliveredByPlayer;
-        console.log(this);
+        const isPaxAndComplete = resource.ResourceId === 49 && resource.LastAmount === resource.Limit;
+        this.isDeliveredByPlayer = resource.DeliveredByPlayer && !isPaxAndComplete;
     }
 
     setPrestige(response: CityTransportResponse) {

@@ -106,11 +106,9 @@ export class CityUtilComponent implements OnInit {
       city.loading = true;
       let cityResponse = await this.cityService.getCityDetails(city.id).toPromise();
       city.setCityResponse(cityResponse);
-      console.log(city.id, city.rgs[0], city.rgs[0].id, city.rgs[0].playerRank);
       for(let rg of city.allRgs.filter(rg => rg.isDeliveredByPlayer)) {
         let prestigeResponse = await this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.playerRank).toPromise();
         rg.setPrestige(prestigeResponse);
-        console.log(rg);
       }
       city.loading = false;
     } catch (error) {
