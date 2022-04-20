@@ -6,5 +6,6 @@ export interface CityResponse {
             Incoming: number[],
             Storages: Resource[]
         }
+        Level: number;
     };
 }
