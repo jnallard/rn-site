@@ -2,38 +2,34 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PrestigeFilterType } from '../enums/prestige-filter-type.enum';
 import { PrestigeResponse } from '../models/prestige-response.model';
-import { ProfileResponse } from '../models/profile-response.model';
 import { RankResponse } from '../models/rank-response.model';
+import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlayerService {
+export class PlayerService extends BaseProxyService {
 
-  constructor(private httpClient: HttpClient, private settings: SettingsService) { }
+  constructor(httpClient: HttpClient, settings: SettingsService) {
+    super(httpClient, settings);
+  }
 
   getTopPlayers(rankStartIndex: number, rankEndIndex: number) {
     let param = `[${rankStartIndex},${rankEndIndex}]`;
-    let cookie = this.settings.cookie;
-    let server = this.settings.server;
     let urlQueryPath = 'interface=PlayerHighscoreInterface&method=get&short=96';
-    return this.httpClient.get<RankResponse>(`/proxy?cookie=${encodeURIComponent(cookie)}&param=${encodeURIComponent(param)}&server=${encodeURIComponent(server)}&urlQueryPath=${encodeURIComponent(urlQueryPath)}`);
+    return this.get<RankResponse>(urlQueryPath, param);
   }
 
   getPlayerProfiles(ids: string[]) {
     let param = `[${JSON.stringify(ids)}]`;
-    let cookie = this.settings.cookie;
-    let server = this.settings.server;
     let urlQueryPath = 'interface=ProfileInterface&method=getVCard&short=96';
-    return this.httpClient.get<ProfileResponse>(`/proxy?cookie=${encodeURIComponent(cookie)}&param=${encodeURIComponent(param)}&server=${encodeURIComponent(server)}&urlQueryPath=${encodeURIComponent(urlQueryPath)}`);
+    return this.get(urlQueryPath, param);
   }
 
   getPrestigeHistory(id: string, type: PrestigeFilterType) {
     let param = `["${id}",${type}]`;
-    let cookie = this.settings.cookie;
-    let server = this.settings.server;
     let urlQueryPath = 'interface=BudgetInterface&method=getPrestigeHistoryDetails&short=96';
-    return this.httpClient.get<PrestigeResponse>(`/proxy?cookie=${encodeURIComponent(cookie)}&param=${encodeURIComponent(param)}&server=${encodeURIComponent(server)}&urlQueryPath=${encodeURIComponent(urlQueryPath)}`);
+    return this.get<PrestigeResponse>(urlQueryPath, param);
   }
 }

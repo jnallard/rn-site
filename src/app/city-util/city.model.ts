@@ -9,12 +9,7 @@ export class City {
     hash: string;
     loading = false;
 
-    get selected(): boolean {
-        return localStorage.getItem(`city-selected-${this.name}`) == 'true';
-    }
-    set selected(value: boolean) {
-        localStorage.setItem(`city-selected-${this.name}`, value ? 'true' : 'false');
-    }
+    selected = false;
 
     get allRgs() {
         if(!this.rgs) {
@@ -28,15 +23,15 @@ export class City {
     }
 
     setCityResponse(cityResponse: CityResponse) {
-        this.rgs = cityResponse.Body.StoragesInfo.Incoming.filter(x => x != 49).slice(-4).map(rg => {
-            const storage = cityResponse.Body.StoragesInfo.Storages.find(st => st.ResourceId === rg);
+        this.rgs = cityResponse.StoragesInfo.Incoming.filter(x => x != 49).slice(-4).map(rg => {
+            const storage = cityResponse.StoragesInfo.Storages.find(st => st.ResourceId === rg);
             return new RequiredGood(storage!);
         });
-        let paxStorage = cityResponse.Body.StoragesInfo.Storages.find(st => st.ResourceId === 49);
+        let paxStorage = cityResponse.StoragesInfo.Storages.find(st => st.ResourceId === 49);
         if(paxStorage) {
-            this.paxRg = new RequiredGood(paxStorage!);
+            this.paxRg = new RequiredGood(paxStorage);
         }
-        this.level = cityResponse.Body.Level;
+        this.level = cityResponse.Level;
     }
 
     getPercentDone() {
@@ -52,5 +47,9 @@ export class City {
 
     getPrestigePoints() {
       return this.allRgs?.filter(rg => rg?.isDeliveredByPlayer).reduce((sum, nextRg) => sum += nextRg.prestige, 0) ?? 0;
+    }
+
+    getPaxPercent() {
+        return this.paxRg ? (this.paxRg.amountDelivered / this.paxRg.goalAmount) : 100;
     }
 }

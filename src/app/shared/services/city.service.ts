@@ -1,29 +1,45 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { StaticCityData } from '../data/static-city.data';
 import { CityResponse } from '../models/city-response.model';
+import { CityTransportResponse } from '../models/city-transport-response.model';
+import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CityService {
+export class CityService extends BaseProxyService {
 
-  constructor(private httpClient: HttpClient, private settings: SettingsService) { }
+  constructor(httpClient: HttpClient, settings: SettingsService) {
+    super(httpClient, settings);
+  }
 
   getCityDetails(id: string) {
     let param = `["${id}"]`;
-    let cookie = this.settings.cookie;
-    let server = this.settings.server;
     let urlQueryPath = 'interface=LocationInterface&method=getTownDetails&short=96';
-    return this.httpClient.get<CityResponse>(`/proxy?cookie=${encodeURIComponent(cookie)}&param=${encodeURIComponent(param)}&server=${encodeURIComponent(server)}&urlQueryPath=${encodeURIComponent(urlQueryPath)}`);
+    return this.get<CityResponse>(urlQueryPath, param);
   }
 
   getCityPrestigeForResource(id: string, resourceId: number, rank: number) {
     let param = `["${id}",${resourceId},0,${rank},1,0]`;
-    let cookie = this.settings.cookie;
-    let server = this.settings.server;
     let urlQueryPath = 'interface=StatisticsInterface&method=getTransportListRank&short=96';
-    return this.httpClient.get<any>(`/proxy?cookie=${encodeURIComponent(cookie)}&param=${encodeURIComponent(param)}&server=${encodeURIComponent(server)}&urlQueryPath=${encodeURIComponent(urlQueryPath)}`);
+    return this.get<CityTransportResponse>(urlQueryPath, param);
+  }
+
+  getMyCityIDs() {
+    let param = `["${this.settings.userId}"]`;
+    let urlQueryPath = 'interface=RailInterface&method=getForUser&short=60411';
+    return this.get<{FromId: string, ToId: string}[]>(urlQueryPath, param).pipe(map(routes => {
+      let destIds = new Set<string>();
+      routes.forEach(route => {
+        destIds.add(route.FromId);
+        destIds.add(route.ToId);
+      });
+      let staticCities = StaticCityData.getCityDictionary();
+      let ids = Array.from(destIds.entries()).map(e => e[1]).filter(id => staticCities[id]);
+      return ids;
+    }));
   }
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import { AccountService } from './shared/services/account.service';
 import { SettingsService } from './shared/services/settings.service';
 
 @Component({
@@ -7,13 +9,17 @@ import { SettingsService } from './shared/services/settings.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   public isCollapsed = true;
+  public isLoading = false;
+  public error: string;
+
   public cookie = '';
   public server = '';
+  public userId = '';
 
-  constructor(router: Router, public settings: SettingsService) {
+  constructor(router: Router, public settings: SettingsService, private accountService: AccountService) {
     router.events.subscribe(event => {
       this.isCollapsed = true;
       if(event instanceof NavigationStart && location.hash) {
@@ -32,9 +38,27 @@ export class AppComponent {
     });
   }
 
+  ngOnInit(): void {
+    if(this.settings.cookie && this.settings.server) {
+      this.getUserId();
+    }
+  }
+
   setSettings() {
     console.log(this.cookie, this.server);
     this.settings.cookie = this.cookie;
     this.settings.server = this.server;
+    this.getUserId();
+  }
+
+  getUserId() {
+    this.isLoading = true;
+    this.error = null;
+    this.accountService.getUserId().pipe(finalize(() => this.isLoading = false)).subscribe(userId => {
+      this.settings.userId = userId;
+    }, error => {
+      this.error = `Failed to get user profile`;
+      console.error(error);
+    });
   }
 }

@@ -52,22 +52,22 @@ export class PrestigeHistory {
     }
 
     get totalPrestige() {
-        return Array.from(this.prestigeHistoryResponse.Body.balance.values()).reduce((prev, curr) => prev + +curr.prestige, 0);
+        return Array.from(this.prestigeHistoryResponse.balance.values()).reduce((prev, curr) => prev + +curr.prestige, 0);
     }
 
     get totalPrestigeRank() {
-        return this.prestigeHistoryResponse.Body.playerRank + 1;
+        return this.prestigeHistoryResponse.playerRank + 1;
     }
 
     constructor(private prestigeHistoryResponse: PrestigeResponse) {
     }
 
     private getPrestige(type: PrestigeType) {
-        return this.prestigeHistoryResponse.Body.balance.find(x => x.type == type)?.prestige;
+        return this.prestigeHistoryResponse.balance.find(x => x.type == type)?.prestige;
     }
 
     private getPrestigeRank(type: PrestigeType) {
-        const rank = this.prestigeHistoryResponse.Body.ranking[type];
+        const rank = this.prestigeHistoryResponse.ranking[type];
         return rank != null ? rank + 1 : null;
     }
 }

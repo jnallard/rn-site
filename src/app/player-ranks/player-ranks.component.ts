@@ -31,11 +31,10 @@ export class PlayerRanksComponent implements OnInit {
   async getPlayers() {
     let topPlayers = await this.playerService.getTopPlayers(0, 19).toPromise();
     console.log(topPlayers);
-    let profiles = await this.playerService.getPlayerProfiles(topPlayers.Body.highscore.map(x => x["0"])).toPromise();
-    console.log(profiles);
+    let profiles = await this.playerService.getPlayerProfiles(topPlayers.highscore.map(x => x["0"])).toPromise();
 
-    var players = topPlayers.Body.highscore.map(id => {
-      const profile = profiles.Body[id[0]];
+    var players = topPlayers.highscore.map(id => {
+      const profile = profiles[id[0]];
       console.log(profile);
       const player = new Player(profile.userName, id[0]);
       this.players.push(player);

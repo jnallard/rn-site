@@ -1,7 +1,5 @@
 export interface RankResponse {
-    Body: {
-        highscore: {
-            0: string,
-        }[]
-    };
+    highscore: {
+        0: string,
+    }[]
 }

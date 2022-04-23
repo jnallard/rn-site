@@ -19,5 +19,7 @@ export class SettingsService {
     localStorage.setItem('rn-server', value);
   }
 
+  userId: string;
+
   constructor() { }
 }

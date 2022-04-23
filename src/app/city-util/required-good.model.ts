@@ -28,8 +28,8 @@ export class RequiredGood {
     }
 
     setPrestige(response: CityTransportResponse) {
-        if(response?.Body?.Result && response?.Body?.Result.length == 1){
-            this.prestige = response.Body.Result[0].Prestige;
+        if(response?.Result && response?.Result.length == 1){
+            this.prestige = response.Result[0].Prestige;
         }
     }
 }
