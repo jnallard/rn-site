@@ -32,7 +32,7 @@
     </ul>
   </div>
 </nav>
-<div class="container" *ngIf="!settings.cookie || !settings.server">
+<div class="container" *ngIf="(!settings.cookie || !settings.server) && !isLoading">
   <h1>Welcome to RN Site!</h1>
   <p>In order to use this service, you must enter a valid cookie and server.</p>
   <form>
@@ -49,6 +49,12 @@
     <button type="submit" class="btn btn-primary" (click)="setSettings()">Submit</button>
   </form>
 </div>
-<div *ngIf="settings.cookie && settings.server">
+<div class="container" *ngIf="error">
+  <div class="alert alert-danger">{{error}}</div>
+</div>
+<div class="container" *ngIf="isLoading">
+  Loading user...
+</div>
+<div *ngIf="settings.cookie && settings.server && settings.userId">
   <router-outlet></router-outlet>
 </div>
