@@ -29,7 +29,7 @@ export class City {
         });
         let paxStorage = cityResponse.StoragesInfo.Storages.find(st => st.ResourceId === 49);
         if(paxStorage) {
-            this.paxRg = new RequiredGood(paxStorage!);
+            this.paxRg = new RequiredGood(paxStorage);
         }
         this.level = cityResponse.Level;
     }
@@ -47,5 +47,9 @@ export class City {
 
     getPrestigePoints() {
       return this.allRgs?.filter(rg => rg?.isDeliveredByPlayer).reduce((sum, nextRg) => sum += nextRg.prestige, 0) ?? 0;
+    }
+
+    getPaxPercent() {
+        return this.paxRg ? (this.paxRg.amountDelivered / this.paxRg.goalAmount) : 100;
     }
 }

@@ -8,7 +8,7 @@ import { ModalService } from '../shared/services/modal.service';
 import { City } from './city.model';
 
 enum SortMode {
-  Alpha = 'alpha', Growth = 'growth', Level = 'level', Prestige = 'prestige'
+  Alpha = 'alpha', Growth = 'growth', Level = 'level', Prestige = 'prestige', Pax = 'pax'
 }
 
 @Component({
@@ -121,6 +121,9 @@ export class CityUtilComponent implements OnInit {
         return;
       case SortMode.Prestige:
         this.visibleCities.sort((a, b) => b.getPrestigePoints() - a.getPrestigePoints());
+        return;
+      case SortMode.Pax:
+        this.visibleCities.sort((a, b) => a.getPaxPercent() - b.getPaxPercent());
         return;
     }
   }
