@@ -18,7 +18,8 @@ export class EndgameCorpStatsComponent implements OnInit {
   columnDefs: ColDef[] = [
     { field: 'user', pinned: true },
     { field: 'total' },
-    { field: 'totalNoPax' },
+    { field: 'totalNoPax', headerName: 'Total (without PAX)' },
+    { field: 'totalPrestige', headerName: 'Prestige Gained' },
   ].concat(StaticResourceData.getResources().map((r) => ({ field: r.name })));
   defaultColDef = {
     minWidth: 120,
@@ -47,13 +48,14 @@ export class EndgameCorpStatsComponent implements OnInit {
   async loadData() {
     const account = await this.getAccount();
     this.corpId = account.corpId;
+    //this.corpId = '8c5e48e8-ef78-d1d5-1f27-ecac109d5bcb'; // AAA, replace with Corp selector
     this.homeTownId = account.homeTownId;
     console.log(this.corpId, this.homeTownId);
     const userIds = await this.getUserIds(this.corpId);
     console.log(userIds);
     const users = await this.getUserNames(userIds);
     for (const user of users) {
-      this.userData.set(user.id, { user: user.name, total: 0, totalNoPax: 0 });
+      this.userData.set(user.id, { user: user.name, total: 0, totalNoPax: 0, totalPrestige: 0 });
     }
     this.updateRows();
     console.log(users);
@@ -85,6 +87,7 @@ export class EndgameCorpStatsComponent implements OnInit {
         const currentData = this.userData.get(user);
         currentData[resource.name] = userRecord.Delivered;
         currentData.total += userRecord.Delivered;
+        currentData.totalPrestige += userRecord.Prestige;
         if (resource.id !== 49) {
           currentData.totalNoPax += userRecord.Delivered;
         }

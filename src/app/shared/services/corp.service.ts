@@ -40,6 +40,8 @@ export class CorpService extends BaseProxyService {
   getEndGameResultForGood(corpId: string, cityId: string, resourceId: number) {
     const param = `["${cityId}","${corpId}",${resourceId},25,0]`;
     const urlQueryPath = 'interface=EndgameInterface&method=getTransportListCorporationPlayer&short=96';
-    return this.get<any>(urlQueryPath, param).pipe(map(response => response.Corporation as {[userId: string]: { Delivered: number}}));
+    return this.get<any>(urlQueryPath, param).pipe(
+      map(response => response.Corporation as {[userId: string]: { Delivered: number, Prestige: number}})
+    );
   }
 }
