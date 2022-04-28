@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -14,10 +14,23 @@ export class AccountService extends BaseProxyService {
   }
 
   getUserId() {
-    let param = `["f4b0e8bdfb6ca76ab702ee2326df2aaa"]`;
-    let urlQueryPath = 'interface=AccountInterface&method=isLoggedIn&short=60411';
+    const param = `["f4b0e8bdfb6ca76ab702ee2326df2aaa"]`;
+    const urlQueryPath = 'interface=AccountInterface&method=isLoggedIn&short=60411';
     return this.get<string>(urlQueryPath, param).pipe(tap(response => {
       if (response as any == false) throw 'UserId not set'}
     ));
+  }
+
+  getMyProfile() {
+    const userId = this.settings.userId;
+    const param = `[["${userId}"]]`;
+    const urlQueryPath = 'interface=ProfileInterface&method=getVCard&short=60411';
+    return this.get<any>(urlQueryPath, param).pipe(map(response => {
+      const data = response[userId];
+      return {
+        corpId: data.corporationID,
+        homeTownId: data.homeTown
+      }
+    }));
   }
 }

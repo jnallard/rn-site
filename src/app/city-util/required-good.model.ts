@@ -1,6 +1,6 @@
+import { StaticResourceData } from "../shared/data/static-resource.data";
 import { CityTransportResponse } from "../shared/models/city-transport-response.model";
 import { Resource } from "../shared/models/resource.model";
-import { Resources } from "./resource.util";
 
 export class RequiredGood {
     name: string;
@@ -15,7 +15,7 @@ export class RequiredGood {
     prestige: number = null;
 
     constructor(resource: Resource) {
-        this.name = Resources.getResource(resource.ResourceId);
+        this.name = StaticResourceData.getResource(resource.ResourceId);
         this.id = resource.ResourceId;
         this.amountDelivered = resource.Amount;
         this.playerRank = resource.PositionOfPlayer;

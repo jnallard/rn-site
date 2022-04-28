@@ -1,0 +1,14 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <ag-grid-angular
+      class="ag-theme-alpine"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      (gridReady)="onGridReady($event)"
+    >
+    </ag-grid-angular>
+  </div>
+  <button class="btn btn-primary" (click)="export()">Export</button>
+  <span *ngIf="isLoading">Loading...</span>
+</div>
