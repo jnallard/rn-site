@@ -1,9 +1,13 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthModule } from '@auth0/auth0-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AgGridModule } from 'ag-grid-angular';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
@@ -11,14 +15,12 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { ConfirmationModalComponent } from './shared/components/confirmation-modal/confirmation-modal.component';
 import { CityUtilComponent } from './city-util/city-util.component';
 import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { EndgameCorpStatsComponent } from './endgame-corp-stats/endgame-corp-stats.component';
+import { HomeComponent } from './home/home.component';
 import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
+import { ConfirmationModalComponent } from './shared/components/confirmation-modal/confirmation-modal.component';
 
 
 const appRoutes: Routes = [
@@ -28,6 +30,7 @@ const appRoutes: Routes = [
   },
   { path: 'home', component: HomeComponent },
   { path: 'city-util', component: CityUtilComponent },
+  { path: 'endgame-corp-stats', component: EndgameCorpStatsComponent },
   { path: 'player-ranks', component: PlayerRanksComponent }
 ];
 
@@ -36,6 +39,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     CityUtilComponent,
+    EndgameCorpStatsComponent,
     HomeComponent,
     ConfirmationModalComponent,
     RgChartComponent,
@@ -62,7 +66,8 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     NgbModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    AgGridModule.withComponents([])
   ],
   providers: [],
   bootstrap: [AppComponent]
