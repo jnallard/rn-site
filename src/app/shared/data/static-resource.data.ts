@@ -36,7 +36,7 @@ export class StaticResourceData {
       33: 'Clothing',
       34: 'StainlessSteel',
       35: 'Bauxite',
-      //36: 'Machinery', // TODO: Find way to figure out if a good was finished during endgame. Do not merge this
+      36: 'Machinery',
       37: 'Plastics',
       38: 'Aluminium',
       39: 'Pottery',

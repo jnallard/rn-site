@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { StaticCityData } from '../shared/data/static-city.data';
 import { StaticResourceData } from '../shared/data/static-resource.data';
 import { AccountService } from '../shared/services/account.service';
 import { CorpService } from '../shared/services/corp.service';
@@ -10,13 +11,21 @@ import { CorpService } from '../shared/services/corp.service';
   styleUrls: ['./endgame-corp-stats.component.css'],
 })
 export class EndgameCorpStatsComponent implements OnInit {
-  corpId = '';
-  homeTownId = '';
+  myHomeTownId = '';
+  myCorpId = '';
+
   isLoading = true;
+  cities = StaticCityData.AllCities.slice(0);
+  cityId: string;
+  corpSelection = 'mine';
+
+  userData = new Map<string, any>();
+  rowData: any[] = [];
 
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'user', pinned: true },
+    { field: 'corporation', pinned: true },
     { field: 'total' },
     { field: 'totalNoPax', headerName: 'Total (without PAX)' },
     { field: 'totalPrestige', headerName: 'Prestige Gained' },
@@ -27,39 +36,40 @@ export class EndgameCorpStatsComponent implements OnInit {
     resizable: true,
   } as ColDef;
 
-  onGridReady(event: GridReadyEvent) {
-    this.gridAPI = event.api;
-    event.api.sizeColumnsToFit();
-  }
-
-  userData = new Map<string, any>();
-  rowData: any[] = [];
-  //rowData = of(this._rowData);
-
   constructor(
     private accountService: AccountService,
     private corpService: CorpService
   ) {}
 
   ngOnInit(): void {
-    this.loadData().then();
+    this.cities.sort((a, b) => a.name.localeCompare(b.name));
+    this.loadInitialData().then();
+  }
+
+  async loadInitialData() {
+    const account = await this.getAccount();
+    this.myCorpId = account.corpId;
+    this.myHomeTownId = account.homeTownId;
+    this.cityId = this.myHomeTownId;
+    this.isLoading = false;
   }
 
   async loadData() {
-    const account = await this.getAccount();
-    this.corpId = account.corpId;
-    //this.corpId = '8c5e48e8-ef78-d1d5-1f27-ecac109d5bcb'; // AAA, replace with Corp selector
-    this.homeTownId = account.homeTownId;
-    console.log(this.corpId, this.homeTownId);
-    const userIds = await this.getUserIds(this.corpId);
-    console.log(userIds);
-    const users = await this.getUserNames(userIds);
-    for (const user of users) {
-      this.userData.set(user.id, { user: user.name, total: 0, totalNoPax: 0, totalPrestige: 0 });
+    this.isLoading = true;
+    let corpIds = [this.myCorpId];
+    if (this.corpSelection === 'all') {
+      corpIds = await this.getCorpsInCity(this.cityId);
     }
-    this.updateRows();
-    console.log(users);
-    await this.getResourceGoods(this.corpId, this.homeTownId);
+    for (const corpId of corpIds) {
+      const corp = await this.getCorpDetails(corpId);
+      const userIds = corp.members;
+      const users = await this.getUserNames(userIds);
+      for (const user of users) {
+        this.userData.set(user.id, { user: user.name, corporation: corp.name, total: 0, totalNoPax: 0, totalPrestige: 0 });
+      }
+      this.updateRows();
+      await this.getResourceGoods(corpId, this.cityId);
+    }
     this.isLoading = false;
   }
 
@@ -67,8 +77,12 @@ export class EndgameCorpStatsComponent implements OnInit {
     return await this.accountService.getMyProfile().toPromise();
   }
 
-  async getUserIds(corpId: string) {
-    return await this.corpService.getUserIds(corpId).toPromise();
+  async getCorpsInCity(cityId: string) {
+    return await this.corpService.getCorpsInEndGame(cityId).toPromise();
+  }
+
+  async getCorpDetails(corpId: string) {
+    return await this.corpService.getCorpDetails(corpId).toPromise();
   }
 
   async getUserNames(userIds: string[]) {
@@ -80,7 +94,6 @@ export class EndgameCorpStatsComponent implements OnInit {
       const result = await this.corpService
         .getEndGameResultForGood(cordId, cityId, resource.id)
         .toPromise();
-      console.log(result);
       const users = Object.keys(result);
       for (const user of users) {
         const userRecord = result[user];
@@ -103,5 +116,10 @@ export class EndgameCorpStatsComponent implements OnInit {
 
   export() {
     this.gridAPI.exportDataAsCsv({ fileName: 'endgame.csv' });
+  }
+
+  onGridReady(event: GridReadyEvent) {
+    this.gridAPI = event.api;
+    event.api.sizeColumnsToFit();
   }
 }
