@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     this.accountService.getUserId().pipe(finalize(() => this.isLoading = false)).subscribe(userId => {
+      this.error = null;
       this.settings.userId = userId;
     }, error => {
       this.error = `Failed to get user profile`;

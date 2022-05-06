@@ -21,6 +21,7 @@ import { EndgameCorpStatsComponent } from './endgame-corp-stats/endgame-corp-sta
 import { HomeComponent } from './home/home.component';
 import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
 import { ConfirmationModalComponent } from './shared/components/confirmation-modal/confirmation-modal.component';
+import { TrainStationStatsComponent } from './train-station-stats/train-station-stats.component';
 
 
 const appRoutes: Routes = [
@@ -31,7 +32,8 @@ const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'city-util', component: CityUtilComponent },
   { path: 'endgame-corp-stats', component: EndgameCorpStatsComponent },
-  { path: 'player-ranks', component: PlayerRanksComponent }
+  { path: 'player-ranks', component: PlayerRanksComponent },
+  { path: 'train-station-stats', component: TrainStationStatsComponent },
 ];
 
 
@@ -43,7 +45,8 @@ const appRoutes: Routes = [
     HomeComponent,
     ConfirmationModalComponent,
     RgChartComponent,
-    PlayerRanksComponent
+    PlayerRanksComponent,
+    TrainStationStatsComponent,
   ],
   imports: [
     AuthModule.forRoot({

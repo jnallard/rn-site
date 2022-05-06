@@ -29,7 +29,7 @@ export class EndgameCorpStatsComponent implements OnInit {
     { field: 'total' },
     { field: 'totalNoPax', headerName: 'Total (without PAX)' },
     { field: 'totalPrestige', headerName: 'Prestige Gained' },
-  ].concat(StaticResourceData.getResources().map((r) => ({ field: r.name })));
+  ].concat(StaticResourceData.getResources().map((r) => ({ field: r.name, comparator: (valueA, valueB) => valueA - valueB })));
   defaultColDef = {
     minWidth: 120,
     sortable: true,
