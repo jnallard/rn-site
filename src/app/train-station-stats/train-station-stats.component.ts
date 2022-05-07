@@ -29,6 +29,7 @@ export class TrainStationStatsComponent implements OnInit {
     { field: 'dailyPrestige' },
     { field: 'workerMoneyBonus' },
     { field: 'workerPrestigeBonus' },
+    { field: 'suggestedWorkerDonation', cellStyle: { 'background-color': 'yellow' } },
   ].concat(StaticBuildingData.AllBuildings.map((b) => ({
     field: b.name, comparator: (valueA, valueB) => valueA - valueB,
     cellRenderer: params => {
@@ -71,7 +72,7 @@ export class TrainStationStatsComponent implements OnInit {
     const userIds = corp.members;
     const users = await this.getUserNames(userIds);
     for (const user of users) {
-      this.userData.set(user.id, { user: user.name, corporation: corp.name, totalLevels: 0, prestigeLeft: 0, dailyMoney: 0, dailyPrestige: 0, workerMoneyBonus: 0, workerPrestigeBonus: 0 });
+      this.userData.set(user.id, { user: user.name, corporation: corp.name, totalLevels: 0, prestigeLeft: 0, dailyMoney: 0, dailyPrestige: 0, workerMoneyBonus: 0, workerPrestigeBonus: 0, suggestedWorkerDonation: 0 });
     }
     this.updateRows();
     await this.getBuildings(users.map(user => user.id));
@@ -110,6 +111,7 @@ export class TrainStationStatsComponent implements OnInit {
       currentData.dailyPrestige = Hotel.getDailyBonus(hotelLevel.level, 1, 90);
       currentData.workerMoneyBonus = Restaurant.getDailyBonus(restaurantLevel.level, hotelLevel.multiplier, 27) + ShoppingCenter.getDailyBonus(shoppingCenterLevel.level, hotelLevel.multiplier, 108) - currentData.dailyMoney;
       currentData.workerPrestigeBonus = Hotel.getDailyBonus(hotelLevel.level, 1, 54) - currentData.dailyPrestige;
+      currentData.suggestedWorkerDonation = currentData.workerMoneyBonus + (currentData.workerPrestigeBonus * 10000);
 
       this.updateRows();
     }
