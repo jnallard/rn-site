@@ -7,7 +7,9 @@ import {
   ApexPlotOptions,
   ApexLegend
 } from "ng-apexcharts";
+import { CityUtilComponent } from "../city-util.component";
 import { City } from "../city.model";
+import { RequiredGood } from "../required-good.model";
 
 class ChartOptions {
   series: ApexAxisChartSeries = [];
@@ -35,7 +37,7 @@ export class RgChartComponent implements OnInit {
   ngOnInit(): void {
     let firstRg = this.city?.rgs?.[0];
     if(firstRg) {
-      firstRg.name = `${firstRg.name}*`;
+      firstRg.name = `${firstRg.name} [D]`;
     }
     const dataPoints = this.city?.rgs?.map(rg => {
       let goalAfterConsumption = rg.maxAmount * 0.67;
@@ -188,6 +190,10 @@ export class RgChartComponent implements OnInit {
       return 'bg-secondary';
     }
     return 'bg-light text-dark';
+  }
+
+  getPPRatioOpacity(rg: RequiredGood) {
+    return Math.max(rg.bestTonnagePrestigeRatio / CityUtilComponent.BestPPRatio, 0.15);
   }
 
 }

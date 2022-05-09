@@ -1,20 +1,27 @@
 #chart {
     position: relative;
     max-height: 260px;
+    max-width: calc(100% - 50px);
 }
 
 #rg-ranks {
     position: absolute;
-    top: 25px;
-    right: -5px;
+    top: 22px;
+    right: -55px;
+    text-align: right;
 }
 
-.rank {
+.rank-row {
     margin-bottom: 10px;
 }
 
-.rank.last {
+.rank-row.pax-row {
     margin-top: 57px;
+}
+
+.ppRatio {
+    color: purple;
+    min-width: 60px;
 }
 
 .top-chart {

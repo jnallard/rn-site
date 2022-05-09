@@ -52,4 +52,8 @@ export class City {
     getPaxPercent() {
         return this.paxRg ? (this.paxRg.amountDelivered / this.paxRg.goalAmount) : 100;
     }
+
+    getBestPpRatio() {
+        return this.allRgs.reduce((bestRatio, rg) => Math.max(bestRatio, rg.bestTonnagePrestigeRatio), 0);
+    }
 }

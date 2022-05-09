@@ -23,7 +23,8 @@ export class CityService extends BaseProxyService {
   }
 
   getCityPrestigeForResource(id: string, resourceId: number, rank: number) {
-    let param = `["${id}",${resourceId},0,${rank},1,0]`;
+    rank = Math.max(0, rank ?? 15) + 1;
+    let param = `["${id}",${resourceId},0,0,${rank},0]`;
     let urlQueryPath = 'interface=StatisticsInterface&method=getTransportListRank&short=96';
     return this.get<CityTransportResponse>(urlQueryPath, param);
   }

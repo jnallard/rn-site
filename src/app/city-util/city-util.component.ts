@@ -5,10 +5,11 @@ import { StaticCityData } from '../shared/data/static-city.data';
 import { CityTransportResponse } from '../shared/models/city-transport-response.model';
 import { CityService } from '../shared/services/city.service';
 import { ModalService } from '../shared/services/modal.service';
+import { SettingsService } from '../shared/services/settings.service';
 import { City } from './city.model';
 
 enum SortMode {
-  Alpha = 'alpha', Growth = 'growth', Level = 'level', Prestige = 'prestige', Pax = 'pax'
+  Alpha = 'alpha', Growth = 'growth', Level = 'level', Prestige = 'prestige', Pax = 'pax', PPPerTon = 'ppPerTon'
 }
 
 @Component({
@@ -18,7 +19,9 @@ enum SortMode {
 })
 export class CityUtilComponent implements OnInit {
 
-  constructor(private cityService: CityService, private modalService: ModalService) { }
+  public static BestPPRatio = -1;
+
+  constructor(private cityService: CityService, private modalService: ModalService, private settings: SettingsService) { }
 
   SortMode = SortMode;
   _sortMode = localStorage.getItem('cities.sortMode') as SortMode ?? SortMode.Alpha;
@@ -36,6 +39,7 @@ export class CityUtilComponent implements OnInit {
   cities: City[] = StaticCityData.AllCities.map(city => new City(city.name, city.id));
 
   ngOnInit(): void {
+    CityUtilComponent.BestPPRatio = -1;
     this.cities.sort((cityA, cityB) => cityA.name.localeCompare(cityB.name));
     this.loadStartingCities().then(() => this.loadData()).then();
   }
@@ -59,10 +63,10 @@ export class CityUtilComponent implements OnInit {
       let cityResponse = await this.cityService.getCityDetails(city.id).toPromise();
       city.setCityResponse(cityResponse);
       let tasks = [] as Promise<CityTransportResponse>[];
-      for (let rg of city.allRgs.filter(rg => rg.isDeliveredByPlayer)) {
+      for (let rg of city.allRgs) {
         tasks.push(
           this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.playerRank)
-            .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse))).
+            .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse, this.settings.userId))).
             toPromise()
         );
       }
@@ -109,6 +113,7 @@ export class CityUtilComponent implements OnInit {
   }
 
   sortCities() {
+    CityUtilComponent.BestPPRatio = this.visibleCities.reduce((bestRatio, city) => Math.max(bestRatio, city.getBestPpRatio()), 0.0);
     switch (this.sortMode) {
       case SortMode.Alpha:
         this.visibleCities.sort((a, b) => a.name.localeCompare(b.name));
@@ -124,6 +129,9 @@ export class CityUtilComponent implements OnInit {
         return;
       case SortMode.Pax:
         this.visibleCities.sort((a, b) => a.getPaxPercent() - b.getPaxPercent());
+        return;
+      case SortMode.PPPerTon:
+        this.visibleCities.sort((a, b) => b.getBestPpRatio() - a.getBestPpRatio());
         return;
     }
   }
