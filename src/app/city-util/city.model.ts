@@ -23,7 +23,8 @@ export class City {
     }
 
     setCityResponse(cityResponse: CityResponse) {
-        this.rgs = cityResponse.StoragesInfo.Incoming.filter(x => x != 49).slice(-4).map(rg => {
+        const priorities = cityResponse.Priorities;
+        this.rgs = cityResponse.StoragesInfo.Incoming.filter(x => x != 49 && priorities[x] === 1).slice(-4).map(rg => {
             const storage = cityResponse.StoragesInfo.Storages.find(st => st.ResourceId === rg);
             return new RequiredGood(storage!);
         });

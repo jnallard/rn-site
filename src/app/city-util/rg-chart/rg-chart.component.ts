@@ -36,7 +36,7 @@ export class RgChartComponent implements OnInit {
 
   ngOnInit(): void {
     let firstRg = this.city?.rgs?.[0];
-    if(firstRg) {
+    if(firstRg && this.city.level >= 5) {
       firstRg.name = `${firstRg.name} [D]`;
     }
     const dataPoints = this.city?.rgs?.map(rg => {

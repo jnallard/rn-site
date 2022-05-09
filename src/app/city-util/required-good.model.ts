@@ -35,6 +35,7 @@ export class RequiredGood {
         const foundResult = results.find(x => x.UserId === userId);
         let startingAmount = 0;
         let startingPrestige = 0;
+        let lastPrestige = 1;
         let bestRatio = 0;
         if (foundResult) {
             startingAmount = foundResult.Amount;
@@ -49,11 +50,17 @@ export class RequiredGood {
         for (let result of results) {
             const amountDifference = result.Amount - startingAmount;
             const prestigeDifference = result.Prestige - startingPrestige;
+            lastPrestige = result.Prestige;
             if (amountDifference !== 0) {
                 const tonnageRatio = prestigeDifference / amountDifference;
                 bestRatio = Math.max(bestRatio, tonnageRatio);
             }
         }
+        if(!foundResult) {
+            const tonnageRatio = Math.max(lastPrestige * 0.6, 1) / 1;
+            bestRatio = Math.max(bestRatio, tonnageRatio);
+        }
+
         this.bestTonnagePrestigeRatio = Math.round(bestRatio * 100) / 100;
     }
 }

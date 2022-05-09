@@ -6,4 +6,5 @@ export interface CityResponse {
         Storages: Resource[]
     }
     Level: number;
+    Priorities: {[resourceId: number]: number};
 }
