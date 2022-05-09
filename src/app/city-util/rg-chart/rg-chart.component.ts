@@ -7,6 +7,7 @@ import {
   ApexPlotOptions,
   ApexLegend
 } from "ng-apexcharts";
+import { SettingsService } from "src/app/shared/services/settings.service";
 import { CityUtilComponent } from "../city-util.component";
 import { City } from "../city.model";
 import { RequiredGood } from "../required-good.model";
@@ -32,7 +33,7 @@ export class RgChartComponent implements OnInit {
   public chartOptions: ChartOptions = new ChartOptions();
   public paxChartOptions: ChartOptions = new ChartOptions();
 
-  constructor() { }
+  constructor(private settings: SettingsService) { }
 
   ngOnInit(): void {
     let firstRg = this.city?.rgs?.[0];
@@ -192,8 +193,13 @@ export class RgChartComponent implements OnInit {
     return 'bg-light text-dark';
   }
 
+  getPPRatio(rg: RequiredGood) {
+    return rg.getBestTonnagePrestigeRatio(this.settings.userId);
+  }
+
+
   getPPRatioOpacity(rg: RequiredGood) {
-    return Math.max(rg.bestTonnagePrestigeRatio / CityUtilComponent.BestPPRatio, 0.15);
+    return Math.max(rg.getBestTonnagePrestigeRatio(this.settings.userId) / CityUtilComponent.BestPPRatio, 0.15);
   }
 
 }

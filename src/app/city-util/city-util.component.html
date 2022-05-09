@@ -14,7 +14,11 @@
         <h1>Cities - <small>PP from Selected Cities: {{getTotalPrestigePoints()}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="isAnyCityLoading()"></i></small>
           <span class="float-right">
             <div class="form-inline d-flex align-items-center">
-              <div class="btn-group" btnRadioGroup [(ngModel)]="sortMode">
+              <div class="input-group">
+                <span class="input-group-text">Load Size</span>
+                <input class="form-control" [(ngModel)]="loadSize" placeholder="Number of wagons per load">
+              </div>
+              <div class="btn-group ml-3" btnRadioGroup [(ngModel)]="sortMode">
                 <label class="btn btn-light mb-0" btnRadio="alpha">Alphabetical</label>
                 <label class="btn btn-light mb-0" btnRadio="growth">Growth</label>
                 <label class="btn btn-light mb-0" btnRadio="level">Level</label>
@@ -49,6 +53,6 @@
   <span class="float-right legend">
     <strong>Legend</strong>
     <small class="ml-2 muted">[D]: this good falls off next (level 5+)</small>
-    <small class="ml-2 muted"><span style="color: purple">pp/t:</span> the best ratio of prestige to tonnage delivered</small>
+    <small class="ml-2 muted"><span style="color: purple">pp/L:</span> the best ratio of potential prestige per load</small>
   </span>
 </span>

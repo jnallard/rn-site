@@ -2,6 +2,7 @@ import * as e from "express";
 import { StaticResourceData } from "../shared/data/static-resource.data";
 import { CityTransportResponse } from "../shared/models/city-transport-response.model";
 import { Resource } from "../shared/models/resource.model";
+import { CityUtilComponent } from "./city-util.component";
 
 export class RequiredGood {
     name: string;
@@ -15,7 +16,8 @@ export class RequiredGood {
     isPaxAndComplete: boolean;
     isDeliveredByPlayer: boolean;
     prestige: number = null;
-    bestTonnagePrestigeRatio: number = null;
+
+    private cityTransportResponse: CityTransportResponse;
 
     constructor(resource: Resource) {
         this.name = StaticResourceData.getResource(resource.ResourceId);
@@ -31,7 +33,16 @@ export class RequiredGood {
     }
 
     setPrestige(response: CityTransportResponse, userId: string) {
+        this.cityTransportResponse = response;
         const results = response?.Result ?? [];
+        const foundResult = results.find(x => x.UserId === userId);
+        if (foundResult) {
+            this.prestige = foundResult.Prestige;
+        }
+    }
+    
+    getBestTonnagePrestigeRatio(userId: string) {
+        const results = this.cityTransportResponse?.Result ?? [];
         const foundResult = results.find(x => x.UserId === userId);
         let startingAmount = 0;
         let startingPrestige = 0;
@@ -39,16 +50,14 @@ export class RequiredGood {
         let bestRatio = 0;
         if (foundResult) {
             startingAmount = foundResult.Amount;
-            this.prestige = foundResult.Prestige;
             startingPrestige = foundResult.Prestige;
         }
 
         if (this.isPaxAndComplete) {
-            this.bestTonnagePrestigeRatio = 0;
-            return;
+            return 0;
         }
         for (let result of results) {
-            const amountDifference = result.Amount - startingAmount;
+            const amountDifference = Math.ceil((result.Amount - startingAmount) / CityUtilComponent._loadSize);
             const prestigeDifference = result.Prestige - startingPrestige;
             lastPrestige = result.Prestige;
             if (amountDifference !== 0) {
@@ -61,6 +70,6 @@ export class RequiredGood {
             bestRatio = Math.max(bestRatio, tonnageRatio);
         }
 
-        this.bestTonnagePrestigeRatio = Math.round(bestRatio * 100) / 100;
-    }
+        return Math.round(bestRatio * 100) / 100;
+    };
 }

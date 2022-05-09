@@ -34,6 +34,18 @@ export class CityUtilComponent implements OnInit {
     this.sortCities();
   }
 
+  static _loadSize = +localStorage.getItem('cities.loadSize');
+  get loadSize() {
+    if(CityUtilComponent._loadSize < 1) {
+      CityUtilComponent._loadSize = 1;
+    }
+    return CityUtilComponent._loadSize;
+  }
+  set loadSize(size: number) {
+    CityUtilComponent._loadSize = size;
+    localStorage.setItem('cities.loadSize', size.toString());
+  }
+
   visibleCities: City[] = [];
 
   cities: City[] = StaticCityData.AllCities.map(city => new City(city.name, city.id));
@@ -113,7 +125,7 @@ export class CityUtilComponent implements OnInit {
   }
 
   sortCities() {
-    CityUtilComponent.BestPPRatio = this.visibleCities.reduce((bestRatio, city) => Math.max(bestRatio, city.getBestPpRatio()), 0.0);
+    CityUtilComponent.BestPPRatio = this.visibleCities.reduce((bestRatio, city) => Math.max(bestRatio, city.getBestPpRatio(this.settings.userId)), 0.0);
     switch (this.sortMode) {
       case SortMode.Alpha:
         this.visibleCities.sort((a, b) => a.name.localeCompare(b.name));
@@ -131,7 +143,7 @@ export class CityUtilComponent implements OnInit {
         this.visibleCities.sort((a, b) => a.getPaxPercent() - b.getPaxPercent());
         return;
       case SortMode.PPPerTon:
-        this.visibleCities.sort((a, b) => b.getBestPpRatio() - a.getBestPpRatio());
+        this.visibleCities.sort((a, b) => b.getBestPpRatio(this.settings.userId) - a.getBestPpRatio(this.settings.userId));
         return;
     }
   }

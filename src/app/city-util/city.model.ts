@@ -54,7 +54,7 @@ export class City {
         return this.paxRg ? (this.paxRg.amountDelivered / this.paxRg.goalAmount) : 100;
     }
 
-    getBestPpRatio() {
-        return this.allRgs.reduce((bestRatio, rg) => Math.max(bestRatio, rg.bestTonnagePrestigeRatio), 0);
+    getBestPpRatio(userId: string) {
+        return this.allRgs.reduce((bestRatio, rg) => Math.max(bestRatio, rg.getBestTonnagePrestigeRatio(userId)), 0);
     }
 }
