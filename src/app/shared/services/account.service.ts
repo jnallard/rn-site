@@ -33,4 +33,20 @@ export class AccountService extends BaseProxyService {
       }
     }));
   }
+
+  getServerInfo() {
+    const param = `[]`;
+    const urlQueryPath = 'interface=ServerInfoInterface&method=getInfo&short=60411';
+    return this.get<{config: string}>(urlQueryPath, param).pipe(map(config => {
+      const configName = config.config;
+      const configParts = configName.split('/');
+      const scenario = configParts[0];
+      const speed = configParts[1].replace(/[^a-zA-Z]+/g, '');
+      return {
+        scenario,
+        speed,
+        config,
+      }
+    }));
+  }
 }

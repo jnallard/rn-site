@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
-import { Hotel, Restaurant, ShoppingCenter, StaticBuildingData } from '../shared/data/static-building.data';
+import { Hotel, LevelData, Restaurant, ShoppingCenter, StaticBuildingData } from '../shared/data/static-building.data';
 import { AccountService } from '../shared/services/account.service';
 import { BuildingService } from '../shared/services/building.service';
 import { CorpService } from '../shared/services/corp.service';
@@ -18,6 +18,10 @@ export class TrainStationStatsComponent implements OnInit {
 
   userData = new Map<string, any>();
   rowData: any[] = [];
+
+  restaurantPeriod: number;
+  shoppingCenterPeriod: number;
+  hotelPeriod: number;
 
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
@@ -62,6 +66,20 @@ export class TrainStationStatsComponent implements OnInit {
   async loadInitialData() {
     const account = await this.getAccount();
     this.myCorpId = account.corpId;
+    const serverInfo = await this.getServerInfo();
+    // TODO: Figure out if I can get the period data with a service call. Only 'default' and 'speed' seem like options right now
+    switch (serverInfo.speed) {
+      case 'speed': // 2x 
+        this.restaurantPeriod = 45;
+        this.shoppingCenterPeriod = 180;
+        this.hotelPeriod = 90;
+        break;
+      default: //1x
+        this.restaurantPeriod = 90;
+        this.shoppingCenterPeriod = 360;
+        this.hotelPeriod = 180;
+        break;
+    }
     this.isLoading = false;
   }
 
@@ -83,6 +101,10 @@ export class TrainStationStatsComponent implements OnInit {
 
   async getAccount() {
     return await this.accountService.getMyProfile().toPromise();
+  }
+
+  async getServerInfo() {
+    return await this.accountService.getServerInfo().toPromise();
   }
 
   async getCorpDetails(corpId: string) {
@@ -109,14 +131,25 @@ export class TrainStationStatsComponent implements OnInit {
       const restaurantLevel = Restaurant.levelData.find(ld => ld.level === currentData[Restaurant.name] as number);
       const shoppingCenterLevel = ShoppingCenter.levelData.find(ld => ld.level === currentData[ShoppingCenter.name] as number);
       const hotelLevel = Hotel.levelData.find(ld => ld.level === currentData[Hotel.name] as number);
-      currentData.dailyMoney = Restaurant.getDailyBonus(restaurantLevel.level, hotelLevel.multiplier, 45) + ShoppingCenter.getDailyBonus(shoppingCenterLevel.level, hotelLevel.multiplier, 180);
-      currentData.dailyPrestige = Hotel.getDailyBonus(hotelLevel.level, 1, 90);
-      currentData.workerMoneyBonus = Restaurant.getDailyBonus(restaurantLevel.level, hotelLevel.multiplier, 27) + ShoppingCenter.getDailyBonus(shoppingCenterLevel.level, hotelLevel.multiplier, 108) - currentData.dailyMoney;
-      currentData.workerPrestigeBonus = Hotel.getDailyBonus(hotelLevel.level, 1, 54) - currentData.dailyPrestige;
+      currentData.dailyMoney = this.getDailyBonusMoney(restaurantLevel, shoppingCenterLevel, hotelLevel, false);
+      currentData.dailyPrestige = this.getDailyBonusPrestige(hotelLevel, false);
+      currentData.workerMoneyBonus = this.getDailyBonusMoney(restaurantLevel, shoppingCenterLevel, hotelLevel, true) - currentData.dailyMoney;
+      currentData.workerPrestigeBonus = this.getDailyBonusPrestige(hotelLevel, true) - currentData.dailyPrestige;
       currentData.suggestedWorkerBid = currentData.workerMoneyBonus + (currentData.workerPrestigeBonus * 10000);
 
       this.updateRows();
     }
+  }
+
+  private getDailyBonusMoney(restaurantLevel: LevelData, shoppingCenterLevel: LevelData, hotelLevel: LevelData, withWorker: boolean) {
+    const restaurantPeriodAdjusted = withWorker ? this.restaurantPeriod * 0.60 : this.restaurantPeriod;
+    const scPeriodAdjusted = withWorker ? this.shoppingCenterPeriod * 0.60 : this.shoppingCenterPeriod;
+    return Restaurant.getDailyBonus(restaurantLevel.level, hotelLevel.multiplier, restaurantPeriodAdjusted) + ShoppingCenter.getDailyBonus(shoppingCenterLevel.level, hotelLevel.multiplier, scPeriodAdjusted);
+  }
+
+  private getDailyBonusPrestige(hotelLevel: LevelData, withWorker: boolean) {
+    const hotelPeriodAdjusted = withWorker ? this.hotelPeriod * 0.60 : this.hotelPeriod;
+    return Hotel.getDailyBonus(hotelLevel.level, 1, hotelPeriodAdjusted);
   }
 
   updateRows() {
