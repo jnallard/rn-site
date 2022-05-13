@@ -4,6 +4,7 @@ import { StaticCityData } from '../shared/data/static-city.data';
 import { StaticResourceData } from '../shared/data/static-resource.data';
 import { AccountService } from '../shared/services/account.service';
 import { CorpService } from '../shared/services/corp.service';
+import { PlayerService } from '../shared/services/player.service';
 
 @Component({
   selector: 'app-endgame-corp-stats',
@@ -38,6 +39,7 @@ export class EndgameCorpStatsComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
+    private playerService: PlayerService,
     private corpService: CorpService
   ) {}
 
@@ -86,7 +88,7 @@ export class EndgameCorpStatsComponent implements OnInit {
   }
 
   async getUserNames(userIds: string[]) {
-    return await this.corpService.getUsers(userIds).toPromise();
+    return await this.playerService.getUsers(userIds).toPromise();
   }
 
   async getResourceGoods(cordId: string, cityId: string) {
