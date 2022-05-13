@@ -56,7 +56,7 @@ export class PrestigeHistory {
     }
 
     get totalPrestigeRank() {
-        return this.prestigeHistoryResponse.playerRank + 1;
+        return this.prestigeHistoryResponse.playerRank !== null ? this.prestigeHistoryResponse.playerRank + 1 : null;
     }
 
     constructor(private prestigeHistoryResponse: PrestigeResponse) {

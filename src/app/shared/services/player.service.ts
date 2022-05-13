@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { PrestigeFilterType } from '../enums/prestige-filter-type.enum';
 import { PrestigeResponse } from '../models/prestige-response.model';
 import { RankResponse } from '../models/rank-response.model';
@@ -21,10 +22,15 @@ export class PlayerService extends BaseProxyService {
     return this.get<RankResponse>(urlQueryPath, param);
   }
 
-  getPlayerProfiles(ids: string[]) {
-    let param = `[${JSON.stringify(ids)}]`;
-    let urlQueryPath = 'interface=ProfileInterface&method=getVCard&short=96';
-    return this.get(urlQueryPath, param);
+  getUsers(userIds: string[]) {
+    const param = `[${JSON.stringify(userIds)}]`;
+    const urlQueryPath = 'interface=ProfileInterface&method=getVCard&short=60411';
+    return this.get<any>(urlQueryPath, param).pipe(map(response => Object.values(response).map((u: any) => {
+      return {
+        id: u.userID as string,
+        name: u.userName as string,
+      };
+    })));
   }
 
   getPrestigeHistory(id: string, type: PrestigeFilterType) {

@@ -49,4 +49,10 @@ export class AccountService extends BaseProxyService {
       }
     }));
   }
+
+  getEraInfo() {
+    const param = `[]`;
+    const urlQueryPath = 'interface=EraInterface&method=getEraInfos&short=60411';
+    return this.get<{Era: number, CurrentEraDay: number}>(urlQueryPath, param);
+  }
 }

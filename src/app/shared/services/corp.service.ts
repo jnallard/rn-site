@@ -32,17 +32,6 @@ export class CorpService extends BaseProxyService {
     }));
   }
 
-  getUsers(userIds: string[]) {
-    const param = `[${JSON.stringify(userIds)}]`;
-    const urlQueryPath = 'interface=ProfileInterface&method=getVCard&short=60411';
-    return this.get<any>(urlQueryPath, param).pipe(map(response => Object.values(response).map((u: any) => {
-      return {
-        id: u.userID as string,
-        name: u.userName as string,
-      };
-    })));
-  }
-
   getCorpsInEndGame(cityId: string) {
     const param = `["${cityId}",49,30,0]`;
     const urlQueryPath = 'interface=EndgameInterface&method=getTransportListCorporation&short=96';

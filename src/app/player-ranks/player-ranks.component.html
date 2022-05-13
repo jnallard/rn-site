@@ -1,71 +1,30 @@
-<div class="container-fluid">
-    <h1>Player Rankings</h1>
-
-    <p></p>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th colspan="2">
-                        <select [(ngModel)]="prestigeFilter" class="form-select">
-                            <option *ngFor="let filter of filterOptions"  [ngValue]="filter.type">{{filter.display}}</option>
-                        </select>
-                    </th>
-                    <th colspan="2">Prestige</th>
-                </tr>
-                <tr>
-                    <th rowspan="2">Game Rank</th>
-                    <th rowspan="2">Name</th>
-                    <th>Total</th>
-                    <th>Transports</th>
-                    <th>Investments</th>
-                    <th>Competitions</th>
-                    <th>Train Station</th>
-                    <th>Medals</th>
-                    <th>Misc.</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let player of players; let rank = index;">
-                    <td>
-                        {{rank + 1}}
-                    </td>
-                    <td>
-                        {{player.username}}
-                    </td>
-                    <ng-container *ngIf="getFilteredPrestige(player) as prestige">
-                        <td>
-                            {{prestige.totalPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.totalPrestigeRank)">{{prestige.totalPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.transportPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.transportPrestigeRank)">{{prestige.transportPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.investmentPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.investmentPrestigeRank)">{{prestige.investmentPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.compPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.compPrestigeRank)">{{prestige.compPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.trainStationPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.trainStationPrestigeRank)">{{prestige.trainStationPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.medalPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.medalPrestigeRank)">{{prestige.medalPrestigeRank}}</small>
-                        </td>
-                        <td>
-                            {{prestige.miscPrestige}} <small class="badge rounded-pill" [ngClass]="getRankClass(prestige.miscPrestigeRank)">{{prestige.miscPrestigeRank}}</small>
-                        </td>
-                    </ng-container>
-                    <ng-container *ngIf="!getFilteredPrestige(player)">
-                        <td colspan="7">
-                            Loading...
-                        </td>
-                    </ng-container>
-                </tr>
-                <tr>
-
-                </tr>
-            </tbody>
-        </table>
+<div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col">
+        <select class="form-select" [(ngModel)]="prestigeFilter" (change)="updateRows().then()" [disabled]="isLoading">
+            <option *ngFor="let filter of filterOptions"  [ngValue]="filter.type">{{filter.display}}</option>
+        </select>
+      </div>
+      <div class="col">
+        <button class="btn btn-primary btn-block" (click)="loadData().then()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Reload</span>
+          <span *ngIf="isLoading">Loading...</span>
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-info btn-block" (click)="export()" [disabled]="isLoading">Export</button>
+      </div>
+      
     </div>
-</div>
+    <div class="row">
+      <ag-grid-angular
+        class="ag-theme-alpine"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        (gridReady)="onGridReady($event)"
+      >
+      </ag-grid-angular>
+    </div>
+  </div>
+  

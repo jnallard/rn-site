@@ -1,0 +1,6 @@
+ag-grid-angular {
+    width: 100vw;
+    height: calc(100vh - 130px);
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }

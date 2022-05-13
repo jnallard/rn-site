@@ -4,6 +4,7 @@ import { Hotel, LevelData, Restaurant, ShoppingCenter, StaticBuildingData } from
 import { AccountService } from '../shared/services/account.service';
 import { BuildingService } from '../shared/services/building.service';
 import { CorpService } from '../shared/services/corp.service';
+import { PlayerService } from '../shared/services/player.service';
 
 @Component({
   selector: 'app-train-station-stats',
@@ -23,13 +24,14 @@ export class TrainStationStatsComponent implements OnInit {
   shoppingCenterPeriod: number;
   hotelPeriod: number;
 
+  private numberComparator = (valueA, valueB) => valueA - valueB;
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'user', pinned: true } as ColDef,
     { field: 'corporation', pinned: true },
-    { field: 'suggestedWorkerBid', cellStyle: { 'background-color': 'yellow' }, pinned: true },
+    { field: 'suggestedWorkerBid', cellStyle: { 'background-color': 'yellow' }, pinned: true, comparator: this.numberComparator },
   ].concat(StaticBuildingData.AllBuildings.map((b) => ({
-    field: b.name, comparator: (valueA, valueB) => valueA - valueB,
+    field: b.name, comparator: this.numberComparator,
     cellRenderer: params => {
       if (!params.value) {
         return '';
@@ -39,12 +41,12 @@ export class TrainStationStatsComponent implements OnInit {
     }
   })))
   .concat([
-    { field: 'totalLevels' },
-    { field: 'prestigeLeft' },
-    { field: 'dailyMoney' },
-    { field: 'dailyPrestige' },
-    { field: 'workerMoneyBonus' },
-    { field: 'workerPrestigeBonus' },
+    { field: 'totalLevels', comparator: this.numberComparator },
+    { field: 'prestigeLeft', comparator: this.numberComparator },
+    { field: 'dailyMoney', comparator: this.numberComparator },
+    { field: 'dailyPrestige', comparator: this.numberComparator },
+    { field: 'workerMoneyBonus', comparator: this.numberComparator },
+    { field: 'workerPrestigeBonus', comparator: this.numberComparator },
   ]);
 
   defaultColDef = {
@@ -55,6 +57,7 @@ export class TrainStationStatsComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
+    private playerService: PlayerService,
     private corpService: CorpService,
     private buildingService: BuildingService,
   ) { }
@@ -112,7 +115,7 @@ export class TrainStationStatsComponent implements OnInit {
   }
 
   async getUserNames(userIds: string[]) {
-    return await this.corpService.getUsers(userIds).toPromise();
+    return await this.playerService.getUsers(userIds).toPromise();
   }
 
   async getBuildings(userIds: string[]) {
