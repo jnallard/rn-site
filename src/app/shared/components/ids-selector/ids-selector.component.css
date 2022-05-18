@@ -10,3 +10,7 @@
     z-index: 99;
     background-color: #00000033;
 }
+.scroll-list {
+    max-height: 400px;
+    overflow-y: auto;
+}

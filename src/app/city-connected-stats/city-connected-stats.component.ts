@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { StaticCityData } from '../shared/data/static-city.data';
-import { AccountService } from '../shared/services/account.service';
 import { CityService } from '../shared/services/city.service';
-import { CorpService } from '../shared/services/corp.service';
-import { PlayerService } from '../shared/services/player.service';
 
 @Component({
   selector: 'app-city-connected-stats',
@@ -12,10 +10,14 @@ import { PlayerService } from '../shared/services/player.service';
   styleUrls: ['./city-connected-stats.component.css'],
 })
 export class CityConnectedStatsComponent implements OnInit {
-  myCorpId = '';
 
-  isLoading = true;
-  corpSelection = 'mine';
+  _isLoading = true;
+  get isLoading() {
+    return this._isLoading || !this.idSelector || this.idSelector.isLoading;
+  }
+  
+  @ViewChild(IdsSelectorComponent)
+  private idSelector: IdsSelectorComponent;
 
   cities = StaticCityData.AllCities.slice();
   cityData = new Map<string, any>();
@@ -25,7 +27,6 @@ export class CityConnectedStatsComponent implements OnInit {
   shoppingCenterPeriod: number;
   hotelPeriod: number;
 
-  private numberComparator = (valueA, valueB) => valueA - valueB;
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'city', pinned: true, maxWidth: 150 } as ColDef,
@@ -41,9 +42,6 @@ export class CityConnectedStatsComponent implements OnInit {
   } as ColDef;
 
   constructor(
-    private accountService: AccountService,
-    private playerService: PlayerService,
-    private corpService: CorpService,
     private cityService: CityService,
   ) { }
 
@@ -53,36 +51,18 @@ export class CityConnectedStatsComponent implements OnInit {
   }
 
   async loadInitialData() {
-    const account = await this.getAccount();
-    this.myCorpId = account.corpId;
-    this.isLoading = false;
+    this._isLoading = false;
   }
 
   async loadData() {
-    this.isLoading = true;
-    let corpId = this.myCorpId;
-
-    const corp = await this.getCorpDetails(corpId);
-    const userIds = corp.members;
-    const users = await this.getUserNames(userIds);
+    this._isLoading = true;
+    const users = this.idSelector.selectedPlayers;
     for (const city of this.cities) {
       this.cityData.set(city.id, { city: city.name, totalConnected: 0, connected: [], notConnected: [] });
     }
     this.updateRows();
     await this.getCities(users);
-    this.isLoading = false;
-  }
-
-  async getAccount() {
-    return await this.accountService.getMyProfile().toPromise();
-  }
-
-  async getCorpDetails(corpId: string) {
-    return await this.corpService.getCorpDetails(corpId).toPromise();
-  }
-
-  async getUserNames(userIds: string[]) {
-    return await this.playerService.getUsers(userIds).toPromise();
+    this._isLoading = false;
   }
 
   async getCities(users: {id: string, name: string}[]) {
