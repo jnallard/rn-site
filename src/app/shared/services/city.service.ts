@@ -29,8 +29,8 @@ export class CityService extends BaseProxyService {
     return this.get<CityTransportResponse>(urlQueryPath, param);
   }
 
-  getMyCityIDs() {
-    let param = `["${this.settings.userId}"]`;
+  getCityIDs(playerId: string) {
+    let param = `["${playerId}"]`;
     let urlQueryPath = 'interface=RailInterface&method=getForUser&short=60411';
     return this.get<{FromId: string, ToId: string}[]>(urlQueryPath, param).pipe(map(routes => {
       let destIds = new Set<string>();
@@ -42,5 +42,9 @@ export class CityService extends BaseProxyService {
       let ids = Array.from(destIds.entries()).map(e => e[1]).filter(id => staticCities[id]);
       return ids;
     }));
+  }
+
+  getMyCityIDs() {
+    return this.getCityIDs(this.settings.userId);
   }
 }

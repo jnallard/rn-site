@@ -1,0 +1,17 @@
+<button class="btn btn-light btn-block" (click)="selectorVisible = true">
+  {{groupPick}}
+</button>
+
+<div class="overlay" *ngIf="selectorVisible">
+  <div class="container"><div class="card">
+    <div class="card-header">
+      Group Selector
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Use this to select which players to view</h5>
+      <p class="card-text">This is not fully implemented yet.</p>
+      <a href="#" class="btn btn-primary" (click)="selectorVisible = false">Close</a>
+    </div>
+  </div>
+  </div>
+</div>

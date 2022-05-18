@@ -15,12 +15,14 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AppComponent } from './app.component';
+import { CityConnectedStatsComponent } from './city-connected-stats/city-connected-stats.component';
 import { CityUtilComponent } from './city-util/city-util.component';
 import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
 import { EndgameCorpStatsComponent } from './endgame-corp-stats/endgame-corp-stats.component';
 import { HomeComponent } from './home/home.component';
 import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
 import { ConfirmationModalComponent } from './shared/components/confirmation-modal/confirmation-modal.component';
+import { IdsSelectorComponent } from './shared/components/ids-selector/ids-selector.component';
 import { TrainStationStatsComponent } from './train-station-stats/train-station-stats.component';
 
 
@@ -31,6 +33,7 @@ const appRoutes: Routes = [
   },
   { path: 'home', component: HomeComponent },
   { path: 'city-util', component: CityUtilComponent },
+  { path: 'city-connected-stats', component: CityConnectedStatsComponent },
   { path: 'endgame-corp-stats', component: EndgameCorpStatsComponent },
   { path: 'player-ranks', component: PlayerRanksComponent },
   { path: 'train-station-stats', component: TrainStationStatsComponent },
@@ -41,8 +44,10 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     CityUtilComponent,
+    CityConnectedStatsComponent,
     EndgameCorpStatsComponent,
     HomeComponent,
+    IdsSelectorComponent,
     ConfirmationModalComponent,
     RgChartComponent,
     PlayerRanksComponent,
