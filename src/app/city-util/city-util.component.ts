@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { ConfirmationModalComponent } from '../shared/components/confirmation-modal/confirmation-modal.component';
+import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { StaticCityData } from '../shared/data/static-city.data';
 import { CityTransportResponse } from '../shared/models/city-transport-response.model';
 import { CityService } from '../shared/services/city.service';
@@ -20,8 +21,9 @@ enum SortMode {
 export class CityUtilComponent implements OnInit {
 
   public static BestPPRatio = -1;
+  public static CurrentId = '';
 
-  constructor(private cityService: CityService, private modalService: ModalService, private settings: SettingsService) { }
+  constructor(private cityService: CityService, private modalService: ModalService, public settings: SettingsService) { }
 
   SortMode = SortMode;
   _sortMode = localStorage.getItem('cities.sortMode') as SortMode ?? SortMode.Alpha;
@@ -45,6 +47,14 @@ export class CityUtilComponent implements OnInit {
     CityUtilComponent._loadSize = size;
     localStorage.setItem('cities.loadSize', size.toString());
   }
+  
+  _isLoading = false;
+  get isLoading() {
+    return this._isLoading || !this.idSelector || this.idSelector.isLoading;
+  }
+  
+  @ViewChild(IdsSelectorComponent)
+  private idSelector: IdsSelectorComponent
 
   visibleCities: City[] = [];
 
@@ -53,7 +63,6 @@ export class CityUtilComponent implements OnInit {
   ngOnInit(): void {
     CityUtilComponent.BestPPRatio = -1;
     this.cities.sort((cityA, cityB) => cityA.name.localeCompare(cityB.name));
-    this.loadStartingCities().then(() => this.loadData()).then();
   }
 
   async selectMany(isSelected: boolean) {
@@ -78,7 +87,7 @@ export class CityUtilComponent implements OnInit {
       for (let rg of city.allRgs) {
         tasks.push(
           this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.playerRank)
-            .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse, this.settings.userId))).
+            .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse, CityUtilComponent.CurrentId))).
             toPromise()
         );
       }
@@ -105,12 +114,20 @@ export class CityUtilComponent implements OnInit {
   }
 
   async loadStartingCities() {
-    let myCityIds = await this.cityService.getMyCityIDs().toPromise();
+    let myCityIds = await this.cityService.getCityIDs(CityUtilComponent.CurrentId).toPromise();
+    this.cities.forEach(city => city.selected = false);
     this.cities.filter(city => myCityIds.includes(city.id)).forEach(city => city.selected = true);
   }
 
   async loadData() {
     let errors: string[] = [];
+    const players = this.idSelector.getSelectedPlayers();
+    if(players.length !== 1) {
+      this.modalService.open(ConfirmationModalComponent, `You must select only one player.`);
+      return;
+    }
+    CityUtilComponent.CurrentId = players[0].id;
+    await this.loadStartingCities();
 
     this.visibleCities = this.cities.filter(city => city.selected);
 
@@ -125,7 +142,7 @@ export class CityUtilComponent implements OnInit {
   }
 
   sortCities() {
-    CityUtilComponent.BestPPRatio = this.visibleCities.reduce((bestRatio, city) => Math.max(bestRatio, city.getBestPpRatio(this.settings.userId)), 0.0);
+    CityUtilComponent.BestPPRatio = this.visibleCities.reduce((bestRatio, city) => Math.max(bestRatio, city.getBestPpRatio(CityUtilComponent.CurrentId)), 0.0);
     switch (this.sortMode) {
       case SortMode.Alpha:
         this.visibleCities.sort((a, b) => a.name.localeCompare(b.name));
@@ -143,7 +160,7 @@ export class CityUtilComponent implements OnInit {
         this.visibleCities.sort((a, b) => a.getPaxPercent() - b.getPaxPercent());
         return;
       case SortMode.PPPerTon:
-        this.visibleCities.sort((a, b) => b.getBestPpRatio(this.settings.userId) - a.getBestPpRatio(this.settings.userId));
+        this.visibleCities.sort((a, b) => b.getBestPpRatio(CityUtilComponent.CurrentId) - a.getBestPpRatio(CityUtilComponent.CurrentId));
         return;
     }
   }

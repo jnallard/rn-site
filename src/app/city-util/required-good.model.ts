@@ -14,8 +14,11 @@ export class RequiredGood {
     consumptionPercent: number;
     playerRank: number;
     isPaxAndComplete: boolean;
-    isDeliveredByPlayer: boolean;
     prestige: number = null;
+
+    get isDeliveredByPlayer() {
+        return this.prestige > 0 && !this.isPaxAndComplete
+    }
 
     private cityTransportResponse: CityTransportResponse;
 
@@ -23,13 +26,11 @@ export class RequiredGood {
         this.name = StaticResourceData.getResource(resource.ResourceId);
         this.id = resource.ResourceId;
         this.amountDelivered = resource.Amount;
-        this.playerRank = resource.PositionOfPlayer;
         this.consumptionPercent = resource.ConsumptionAmount;
         this.maxAmount = resource.Limit;
         this.goalAmount = (resource.Limit * 0.67) * (1 + resource.ConsumptionAmount);
         this.percentDelivered = Math.min(Math.floor((resource.Amount / this.goalAmount) * 1000) / 10, 100);
         this.isPaxAndComplete = resource.ResourceId === 49 && resource.LastAmount === resource.Limit;
-        this.isDeliveredByPlayer = resource.DeliveredByPlayer && !this.isPaxAndComplete;
     }
 
     setPrestige(response: CityTransportResponse, userId: string) {
@@ -38,6 +39,7 @@ export class RequiredGood {
         const foundResult = results.find(x => x.UserId === userId);
         if (foundResult) {
             this.prestige = foundResult.Prestige;
+            this.playerRank = foundResult.Position;
         }
     }
     

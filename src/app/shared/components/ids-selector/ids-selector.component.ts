@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, OperatorFunction } from 'rxjs';
 import { distinctUntilChanged, mergeMap, timeout } from 'rxjs/operators';
@@ -26,7 +26,8 @@ export class IdsSelectorComponent implements OnInit {
   get isReady() {
     return this.getSelectedPlayers().length > 0;
   }
-
+  
+  @Input('defaultId') defaultId = '';
 
   constructor(
     private accountService: AccountService,
@@ -41,6 +42,10 @@ export class IdsSelectorComponent implements OnInit {
   async loadInitialData() {
     const account = await this.getAccount();
     this.myCorpId = account.corpId;
+    if (this.defaultId) {
+      await this.addPlayers([this.defaultId]);
+      this.updateGroupPick(this.players[0].name);
+    }
     this.isLoading = false;
   }
 
@@ -132,5 +137,13 @@ export class IdsSelectorComponent implements OnInit {
     await this.loadCorp(corp.id);
     this.updateGroupPick(corp.name);
     await new Promise(r => setTimeout(r, 10));
+  }
+
+  selectAll() {
+    this.players.forEach(player => player.selected = true);
+  }
+
+  deselectAll() {
+    this.players.forEach(player => player.selected = false);
   }
 }

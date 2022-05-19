@@ -194,12 +194,12 @@ export class RgChartComponent implements OnInit {
   }
 
   getPPRatio(rg: RequiredGood) {
-    return rg.getBestTonnagePrestigeRatio(this.settings.userId);
+    return rg.getBestTonnagePrestigeRatio(CityUtilComponent.CurrentId);
   }
 
 
   getPPRatioOpacity(rg: RequiredGood) {
-    return Math.max(rg.getBestTonnagePrestigeRatio(this.settings.userId) / CityUtilComponent.BestPPRatio, 0.15);
+    return Math.max(rg.getBestTonnagePrestigeRatio(CityUtilComponent.CurrentId) / CityUtilComponent.BestPPRatio, 0.15);
   }
 
 }
