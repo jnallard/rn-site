@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { PrestigeFilterType } from '../enums/prestige-filter-type.enum';
 import { PrestigeResponse } from '../models/prestige-response.model';
 import { RankResponse } from '../models/rank-response.model';
+import { Player } from '../types/player.type';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -29,7 +30,7 @@ export class PlayerService extends BaseProxyService {
       return {
         id: u.userID as string,
         name: u.userName as string,
-      };
+      } as Player;
     })));
   }
 

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
+import { SearchResponse } from '../models/search-response.model';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -54,5 +55,11 @@ export class AccountService extends BaseProxyService {
     const param = `[]`;
     const urlQueryPath = 'interface=EraInterface&method=getEraInfos&short=60411';
     return this.get<{Era: number, CurrentEraDay: number}>(urlQueryPath, param);
+  }
+
+  searchPlayers(searchString: string) {
+    const param = `["${searchString}"]`;
+    const urlQueryPath = 'interface=AccountInterface&method=getByName&short=96';
+    return this.get<{ID: string, name: String}[]>(urlQueryPath, param).pipe(map(players => players.map(player => ({id: player.ID, name: player.name} as SearchResponse))));
   }
 }

@@ -1,11 +1,14 @@
-<button class="btn btn-light btn-block" (click)="selectorVisible = true">
+<button class="btn btn-block" (click)="selectorVisible = true" [ngClass]="{'btn-light': isReady, 'btn-warning': !isReady}">
   {{groupPick}}
 </button>
 
 <div class="overlay" *ngIf="selectorVisible">
   <div class="container"><div class="card">
     <div class="card-header">
-      Group Selector <button class="btn btn-primary float-right" (click)="selectorVisible = false">Done</button>
+      <h4>
+        Group Selector - {{groupPick}}
+        <button class="btn btn-primary float-right" (click)="selectorVisible = false">Done</button>
+      </h4>
     </div>
     <div class="card-body">
       <div class="row">
@@ -19,17 +22,23 @@
             <h5>Search:</h5>
             <div class="input-group mb-3">
               <span class="input-group-text">Corp Search</span>
-              <input class="form-control" [(ngModel)]="loadSize" placeholder="Search Corp Names (not implemented)">
+              <input class="form-control" [(ngModel)]="corpSearchText" placeholder="Search Corp Names" [ngbTypeahead]="searchCorps" [resultFormatter]="searchCorpsFormatter" (selectItem)="selectedFoundCorp($event)">
             </div>
             <div class="input-group">
               <span class="input-group-text">Player Search</span>
-              <input class="form-control" [(ngModel)]="loadSize" placeholder="Search User Names (not implemented)">
+              <input class="form-control" [(ngModel)]="playerSearchText" placeholder="Search User Names" [ngbTypeahead]="searchPlayers" [resultFormatter]="searchPlayersFormatter" (selectItem)="selectedFoundPlayer($event)">
             </div>
           </div>
         </div>
         <div class="col">
           <div>
-            <h5 class="card-title">Players: <button class="btn btn-danger ml-3" (click)="reset()">Clear</button></h5>
+            <h5 class="card-title">Players: 
+              <div class="btn-group ml-3">
+                <button class="btn btn-light" (click)="loadMyCorp().then()">My Corp</button>
+                <button class="btn btn-light" (click)="loadTop20().then()">Top 20 Players</button>
+                <button class="btn btn-light" (click)="reset()">Clear</button>
+              </div>
+            </h5>
           </div>
           <div>
             <ul class="list-group list-group-flush scroll-list">

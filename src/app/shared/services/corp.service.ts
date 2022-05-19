@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { SearchResponse } from '../models/search-response.model';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -46,5 +47,11 @@ export class CorpService extends BaseProxyService {
     return this.get<any>(urlQueryPath, param).pipe(
       map(response => response?.Corporation as {[userId: string]: { Delivered: number, Prestige: number}} ?? {})
     );
+  }
+
+  searchCorps(searchString: string) {
+    const param = `["${searchString}"]`;
+    const urlQueryPath = 'interface=CorporationInterface&method=getByName&short=96';
+    return this.get<{ID: string, name: String}[]>(urlQueryPath, param).pipe(map(players => players.map(player => ({id: player.ID, name: player.name} as SearchResponse))));
   }
 }
