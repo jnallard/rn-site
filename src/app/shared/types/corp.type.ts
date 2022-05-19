@@ -1,0 +1,1 @@
+export type Corp = { id: string, name: string, memberIds: string[] };

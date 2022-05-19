@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { Hotel, LevelData, Restaurant, ShoppingCenter, StaticBuildingData } from '../shared/data/static-building.data';
 import { AccountService } from '../shared/services/account.service';
 import { BuildingService } from '../shared/services/building.service';
@@ -12,10 +13,14 @@ import { PlayerService } from '../shared/services/player.service';
   styleUrls: ['./train-station-stats.component.css'],
 })
 export class TrainStationStatsComponent implements OnInit {
-  myCorpId = '';
 
-  isLoading = true;
-  corpSelection = 'mine';
+  _isLoading = true;
+  get isLoading() {
+    return this._isLoading || !this.idSelector || this.idSelector.isLoading;
+  }
+  
+  @ViewChild(IdsSelectorComponent)
+  private idSelector: IdsSelectorComponent;
 
   userData = new Map<string, any>();
   rowData: any[] = [];
@@ -24,7 +29,7 @@ export class TrainStationStatsComponent implements OnInit {
   shoppingCenterPeriod: number;
   hotelPeriod: number;
 
-  private numberComparator = (valueA, valueB) => valueA - valueB;
+  private numberComparator = (valueA, valueB) => (valueA || 0) - (valueB || 0);
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'user', pinned: true } as ColDef,
@@ -67,8 +72,6 @@ export class TrainStationStatsComponent implements OnInit {
   }
 
   async loadInitialData() {
-    const account = await this.getAccount();
-    this.myCorpId = account.corpId;
     const serverInfo = await this.getServerInfo();
     // TODO: Figure out if I can get the period data with a service call. Only 'default' and 'speed' seem like options right now
     switch (serverInfo.speed) {
@@ -83,23 +86,20 @@ export class TrainStationStatsComponent implements OnInit {
         this.hotelPeriod = 180;
         break;
     }
-    this.isLoading = false;
+    this._isLoading = false;
   }
 
   async loadData() {
-    this.isLoading = true;
-    let corpId = this.myCorpId;
+    this._isLoading = true;
+    const users = this.idSelector.getSelectedPlayers();
 
-    // todo: handle corp selection later
-    const corp = await this.getCorpDetails(corpId);
-    const userIds = corp.members;
-    const users = await this.getUserNames(userIds);
     for (const user of users) {
+      const corp = await this.getCorpDetails(user.corpId);
       this.userData.set(user.id, { user: user.name, corporation: corp.name, totalLevels: 0, prestigeLeft: 0, dailyMoney: 0, dailyPrestige: 0, workerMoneyBonus: 0, workerPrestigeBonus: 0, suggestedWorkerBid: 0 });
     }
     this.updateRows();
     await this.getBuildings(users.map(user => user.id));
-    this.isLoading = false;
+    this._isLoading = false;
   }
 
   async getAccount() {

@@ -6,8 +6,11 @@
         </select>
       </div>
       <div class="col">
+        <app-ids-selector></app-ids-selector>
+      </div>
+      <div class="col">
         <button class="btn btn-primary btn-block" (click)="loadData().then()" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Reload</span>
+          <span *ngIf="!isLoading">Load</span>
           <span *ngIf="isLoading">Loading...</span>
         </button>
       </div>

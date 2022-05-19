@@ -30,7 +30,7 @@ export class EndgameCorpStatsComponent implements OnInit {
     { field: 'total' },
     { field: 'totalNoPax', headerName: 'Total (without PAX)' },
     { field: 'totalPrestige', headerName: 'Prestige Gained' },
-  ].concat(StaticResourceData.getResources().map((r) => ({ field: r.name, comparator: (valueA, valueB) => valueA - valueB })));
+  ].concat(StaticResourceData.getResources().map((r) => ({ field: r.name, comparator: (valueA, valueB) => (valueA || 0) - (valueB || 0) })));
   defaultColDef = {
     minWidth: 120,
     sortable: true,
@@ -64,7 +64,7 @@ export class EndgameCorpStatsComponent implements OnInit {
     }
     for (const corpId of corpIds) {
       const corp = await this.getCorpDetails(corpId);
-      const userIds = corp.members;
+      const userIds = corp.memberIds;
       const users = await this.getUserNames(userIds);
       for (const user of users) {
         this.userData.set(user.id, { user: user.name, corporation: corp.name, total: 0, totalNoPax: 0, totalPrestige: 0 });

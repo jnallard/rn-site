@@ -60,7 +60,7 @@ export class IdsSelectorComponent implements OnInit {
     this.isLoading = true;
     const corp = await this.getCorpDetails(id);
     this.updateGroupPick(corp.name);
-    await this.addPlayers(corp.members);
+    await this.addPlayers(corp.memberIds);
     this.isLoading = false;
   }
 

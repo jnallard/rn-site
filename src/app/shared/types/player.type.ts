@@ -1,1 +1,1 @@
-export type Player = { id: string, name: string, selected?: boolean };
+export type Player = { id: string, name: string, corpId: string, selected?: boolean };

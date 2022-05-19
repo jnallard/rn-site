@@ -30,6 +30,7 @@ export class PlayerService extends BaseProxyService {
       return {
         id: u.userID as string,
         name: u.userName as string,
+        corpId: u.corporationID as string,
       } as Player;
     })));
   }

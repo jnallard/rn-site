@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { map, shareReplay } from 'rxjs/operators';
+import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { PrestigeFilterType } from '../shared/enums/prestige-filter-type.enum';
 import { AccountService } from '../shared/services/account.service';
 import { PlayerService } from '../shared/services/player.service';
@@ -25,18 +26,23 @@ interface dataRow {
   styleUrls: ['./player-ranks.component.css']
 })
 export class PlayerRanksComponent implements OnInit {
-
-  constructor(private playerService: PlayerService, private accountService: AccountService) { }
+  
+  _isLoading = false;
+  get isLoading() {
+    return this._isLoading || !this.idSelector || this.idSelector.isLoading;
+  }
+  
+  @ViewChild(IdsSelectorComponent)
+  private idSelector: IdsSelectorComponent
 
   players: Player[] = [];
-  isLoading = false;
   era: number = null;
 
   private gridAPI: GridApi;
   rowData: dataRow[] = [];
   prestigeFilter = PrestigeFilterType.AllTime;
 
-  private numberComparator = (valueA, valueB) => valueA - valueB;
+  private numberComparator = (valueA, valueB) => (valueA || 0) - (valueB || 0);
   getRankRender(rankProperty: string) {
     return (params: any) => {
       if (!params.value) {
@@ -68,15 +74,15 @@ export class PlayerRanksComponent implements OnInit {
     { field: 'misc', comparator: this.numberComparator, cellRenderer: this.getRankRender('miscPrestigeRank') },
   ];
 
-
   filterOptions = [
     { display: 'All Time', type: PrestigeFilterType.AllTime },
     { display: 'Today', type: PrestigeFilterType.Today },
     { display: 'Yesterday', type: PrestigeFilterType.Yesterday },
-  ]
+  ];
+
+  constructor(private playerService: PlayerService, private accountService: AccountService) { }
 
   ngOnInit(): void {
-    this.loadData().then();
   }
 
   async loadData() {
@@ -108,23 +114,16 @@ export class PlayerRanksComponent implements OnInit {
   }
 
   async getPlayers() {
-    this.isLoading = true;
-    this.players = [];
-    let topPlayers = await this.playerService.getTopPlayers(0, 19).toPromise();
-    let profiles = await this.playerService.getUsers(topPlayers.highscore.map(x => x["0"])).toPromise();
+    this._isLoading = true;
+    let profiles = this.idSelector.getSelectedPlayers();
+    this.players = profiles.map(profile => new Player(profile.name, profile.id));
 
-    var players = topPlayers.highscore.map(id => {
-      const profile = profiles.find(p => p.id === id[0]);
-      const player = new Player(profile.name, id[0]);
-      this.players.push(player);
-      return player;
-    });
-    for(let player of players) {
+    for(let player of this.players) {
       await this.getPlayerPrestige(player);
       await new Promise(resolve => setTimeout(resolve, 100));
     }
     await this.updateRows();
-    this.isLoading = false;
+    this._isLoading = false;
   }
 
   async getPlayerPrestige(player: Player) {
@@ -186,7 +185,7 @@ export class PlayerRanksComponent implements OnInit {
   }
 
   async updateRows() {
-    this.isLoading = true;
+    this._isLoading = true;
     this.rowData = [];
     for (let player of this.players) {
       let fileredPrestigeObservale = this.getFilteredPrestige(player);
@@ -210,7 +209,7 @@ export class PlayerRanksComponent implements OnInit {
       this.rowData = this.rowData.slice();
     }
     this.gridAPI?.sizeColumnsToFit();
-    this.isLoading = false;
+    this._isLoading = false;
   }
 
   export() {

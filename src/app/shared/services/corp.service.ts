@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchResponse } from '../models/search-response.model';
+import { Corp } from '../types/corp.type';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -9,6 +11,7 @@ import { SettingsService } from './settings.service';
   providedIn: 'root'
 })
 export class CorpService extends BaseProxyService {
+  private corps: { [corpId: string]: Corp } = {};
 
   constructor(httpClient: HttpClient, settings: SettingsService) {
     super(httpClient, settings);
@@ -22,14 +25,21 @@ export class CorpService extends BaseProxyService {
   }
 
   getCorpDetails(corpId: string) {
+    if(this.corps[corpId]) {
+      return of(this.corps[corpId]);
+    }
+
     const param = `["${corpId}"]`;
     const urlQueryPath = 'interface=CorporationInterface&method=getOverviewScreen&short=96';
     return this.get<any>(urlQueryPath, param).pipe(map(response => {
-      const corp = response.Details;
-      return {
-        name: corp.name as string,
-        members: corp.member.map(m => m.user_id as string) as string[]
-      };
+      const corpResponse = response.Details;
+      const corp = {
+        id: corpId,
+        name: corpResponse.name as string,
+        memberIds: corpResponse.member.map(m => m.user_id as string) as string[]
+      } as Corp;
+      this.corps[corpId] = corp;
+      return corp;
     }));
   }
 
