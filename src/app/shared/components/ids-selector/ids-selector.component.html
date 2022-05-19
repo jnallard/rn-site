@@ -8,28 +8,41 @@
       Group Selector <button class="btn btn-primary float-right" (click)="selectorVisible = false">Done</button>
     </div>
     <div class="card-body">
-      <h5 class="card-title">Use this to select which players to view</h5>
-      <div class="form-inline d-flex align-items-center">
-        <div class="btn-group mr-3">
-          <button class="btn btn-light" (click)="loadMyCorp().then()">My Corp</button>
-          <button class="btn btn-light" (click)="loadTop20().then()">Top 20 Players</button>
+      <div class="row">
+        <div class="col">
+          <div class="form">
+            <h5>Presets:</h5>
+            <div class="btn-group mb-3">
+              <button class="btn btn-light" (click)="loadMyCorp().then()">My Corp</button>
+              <button class="btn btn-light" (click)="loadTop20().then()">Top 20 Players</button>
+            </div>
+            <h5>Search:</h5>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Corp Search</span>
+              <input class="form-control" [(ngModel)]="loadSize" placeholder="Search Corp Names (not implemented)">
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Player Search</span>
+              <input class="form-control" [(ngModel)]="loadSize" placeholder="Search User Names (not implemented)">
+            </div>
+          </div>
         </div>
-        <div class="input-group mr-3">
-          <span class="input-group-text">Corp Search</span>
-          <input class="form-control" [(ngModel)]="loadSize" placeholder="Search Corp Names (not implemented)">
+        <div class="col">
+          <div>
+            <h5 class="card-title">Players: <button class="btn btn-danger ml-3" (click)="reset()">Clear</button></h5>
+          </div>
+          <div>
+            <ul class="list-group list-group-flush scroll-list">
+              <li class="list-group-item clickable" *ngFor="let player of players" (click)="player.selected = !player.selected">
+                <input type="checkbox" [(ngModel)]="player.selected">
+                {{player.name}}
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="input-group">
-          <span class="input-group-text">Player Search</span>
-          <input class="form-control" [(ngModel)]="loadSize" placeholder="Search User Names (not implemented)">
-        </div>
+
       </div>
-      <hr>
-      
-      <h5 class="card-title">Selected Players: <button class="btn btn-danger float-right" (click)="selectedPlayers = []">Clear</button></h5>
     </div>
-    <ul class="list-group list-group-flush scroll-list">
-      <li class="list-group-item" *ngFor="let player of selectedPlayers">{{player.name}}</li>
-    </ul>
   </div>
   </div>
 </div>

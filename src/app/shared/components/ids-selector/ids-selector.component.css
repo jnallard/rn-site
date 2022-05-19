@@ -1,5 +1,5 @@
 .container {
-    margin-top: 150px;
+    margin-top: 50px;
 }
 .overlay {
     position: fixed;
@@ -11,6 +11,6 @@
     background-color: #00000033;
 }
 .scroll-list {
-    max-height: 400px;
+    max-height: 70vh;
     overflow-y: auto;
 }

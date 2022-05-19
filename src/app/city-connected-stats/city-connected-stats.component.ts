@@ -56,7 +56,7 @@ export class CityConnectedStatsComponent implements OnInit {
 
   async loadData() {
     this._isLoading = true;
-    const users = this.idSelector.selectedPlayers;
+    const users = this.idSelector.getSelectedPlayers();
     for (const city of this.cities) {
       this.cityData.set(city.id, { city: city.name, totalConnected: 0, connected: [], notConnected: [] });
     }

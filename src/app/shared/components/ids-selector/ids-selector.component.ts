@@ -3,15 +3,18 @@ import { AccountService } from '../../services/account.service';
 import { CorpService } from '../../services/corp.service';
 import { PlayerService } from '../../services/player.service';
 
+type SelecatablePlayer = { id: string, name: string, selected?: boolean };
+
 @Component({
   selector: 'app-ids-selector',
   templateUrl: './ids-selector.component.html',
   styleUrls: ['./ids-selector.component.css']
 })
 export class IdsSelectorComponent implements OnInit {
+  private readonly defaultGroup = 'Please Select';
   selectorVisible = false;
-  groupPick = 'My Corporation'
-  selectedPlayers: { id: string, name: string }[] = [];
+  groupPick = this.defaultGroup;
+  players: SelecatablePlayer[] = [];
   
   myCorpId: string;
   isLoading = true;
@@ -30,7 +33,6 @@ export class IdsSelectorComponent implements OnInit {
   async loadInitialData() {
     const account = await this.getAccount();
     this.myCorpId = account.corpId;
-    await this.loadMyCorp();
   }
 
   async getAccount() {
@@ -47,21 +49,40 @@ export class IdsSelectorComponent implements OnInit {
 
   async loadMyCorp() {
     this.isLoading = true;
-    this.selectedPlayers = [];
     const corp = await this.getCorpDetails(this.myCorpId);
-    this.groupPick = corp.name;
-    const userIds = corp.members;
-    this.selectedPlayers = await this.getUserNames(userIds);
+    this.updateGroupPick(corp.name);
+    await this.addPlayers(corp.members);
     this.isLoading = false;
   }
 
   async loadTop20() {
     this.isLoading = true;
-    this.selectedPlayers = [];
-    this.groupPick = 'Top 20';
+    this.updateGroupPick('Top 20');
     let topPlayers = await this.playerService.getTopPlayers(0, 19).toPromise();
-    this.selectedPlayers = await this.playerService.getUsers(topPlayers.highscore.map(x => x["0"])).toPromise();
+    await this.addPlayers(topPlayers.highscore.map(x => x["0"]));
     this.isLoading = false;
+  }
+
+  async addPlayers(userIds: string[]) {
+    const newPlayers = await this.getUserNames(userIds) as SelecatablePlayer[];
+    newPlayers.forEach(player => player.selected = true);
+    this.players = this.players
+      .filter(player => !newPlayers.find(newPlayer => player.id === newPlayer.id))
+      .concat(newPlayers);
+    
+  }
+
+  updateGroupPick(group: string) {
+    this.groupPick = this.groupPick === this.defaultGroup ? group : `${this.groupPick}, ${group}`.replace(`${group}, `, '');
+  }
+
+  getSelectedPlayers() {
+    return this.players.filter(player => player.selected);
+  }
+
+  reset() {
+    this.players = [];
+    this.groupPick = this.defaultGroup;
   }
 
 }
