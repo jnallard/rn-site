@@ -42,7 +42,7 @@ export class RgChartComponent implements OnInit {
     }
     const dataPoints = this.city?.rgs?.map(rg => {
       let goalAfterConsumption = rg.maxAmount * 0.67;
-      let goalBeforeConsumption = Math.ceil(goalAfterConsumption * (1 + rg.consumptionPercent));
+      let goalBeforeConsumption = Math.ceil(goalAfterConsumption / (1 - rg.consumptionPercent));
       let fillColor = "#00E396";
       if(rg.amountDelivered < goalAfterConsumption) {
         fillColor = '#d93300'
@@ -66,7 +66,7 @@ export class RgChartComponent implements OnInit {
             strokeWidth: 5,
             strokeColor: "#0000ff"
           },
-          
+
         ],
         fillColor
       }
@@ -128,7 +128,7 @@ export class RgChartComponent implements OnInit {
               value: demand,
               strokeWidth: 5,
               strokeColor: "#775DD0"
-            }            
+            }
           ],
           fillColor
         }
@@ -158,7 +158,7 @@ export class RgChartComponent implements OnInit {
             const goals =
               opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex]
                 .goals;
-  
+
             if (goals && goals.length) {
               return `${val} / ${goals[0].value}`;
             }
