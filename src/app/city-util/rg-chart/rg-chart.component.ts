@@ -61,12 +61,11 @@ export class RgChartComponent implements OnInit {
             strokeColor: "#775DD0"
           },
           {
-            name: "Demand After Consumption",
+            name: "Demand + Consumption",
             value: goalAfterConsumption,
             strokeWidth: 5,
             strokeColor: "#0000ff"
           },
-
         ],
         fillColor
       }
@@ -98,7 +97,9 @@ export class RgChartComponent implements OnInit {
               .goals;
 
           if (goals && goals.length) {
-            return `${val} / ${goals[0].value}`;
+            const deficit = +val - goals[0].value;
+            const deficitDisplay = deficit > 0 ? `+${deficit}` : deficit;
+            return `${val} / ${goals[0].value} (${deficitDisplay})`;
           }
           return val as number;
         }
@@ -106,9 +107,9 @@ export class RgChartComponent implements OnInit {
       legend: {
         show: false,
         showForSingleSeries: true,
-        customLegendItems: ["Demand Before Consumption", "Demand After Consumption"],
+        customLegendItems: ["Demand Before Consumption", "Demand After Consumption", "Deficit"],
         markers: {
-          fillColors: ["#775DD0", "#0000ff"]
+          fillColors: ["#775DD0", "#0000ff", ]
         }
       }
     };
