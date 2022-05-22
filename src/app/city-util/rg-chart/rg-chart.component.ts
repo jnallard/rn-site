@@ -57,15 +57,21 @@ export class RgChartComponent implements OnInit {
           {
             name: "Demand Before Consumption",
             value: goalBeforeConsumption,
-            strokeWidth: 5,
+            strokeWidth: 3,
             strokeColor: "#775DD0"
           },
           {
-            name: "Demand + Consumption",
+            name: "Demand After Consumption",
             value: goalAfterConsumption,
-            strokeWidth: 5,
+            strokeWidth: 3,
             strokeColor: "#0000ff"
           },
+          {
+            name: "Last Amount",
+            value: rg.lastAmount,
+            strokeWidth: 2,
+            strokeColor: "#cccccc"
+          }
         ],
         fillColor
       }

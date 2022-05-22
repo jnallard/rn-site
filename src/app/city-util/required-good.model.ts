@@ -11,6 +11,7 @@ export class RequiredGood {
   percentDelivered: number;
   maxAmount: number;
   goalAmount: number;
+  lastAmount: number;
   consumptionPercent: number;
   playerRank: number;
   isPaxAndComplete: boolean;
@@ -28,6 +29,7 @@ export class RequiredGood {
     this.amountDelivered = resource.Amount;
     this.consumptionPercent = resource.ConsumptionAmount;
     this.maxAmount = resource.Limit;
+    this.lastAmount = resource.LastAmount / (1 - resource.ConsumptionAmount);
     this.goalAmount = (resource.Limit * 0.67) / (1 - resource.ConsumptionAmount);
     this.percentDelivered = Math.min(Math.floor((resource.Amount / this.goalAmount) * 1000) / 10, 100);
     this.isPaxAndComplete = resource.ResourceId === 49 && resource.LastAmount === resource.Limit;
