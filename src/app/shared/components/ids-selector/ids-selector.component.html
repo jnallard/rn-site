@@ -1,4 +1,4 @@
-<button class="btn btn-block" (click)="selectorVisible = true" [ngClass]="{'btn-light': isReady, 'btn-warning': !isReady}">
+<button class="btn btn-block" (click)="selectorVisible = true" [ngClass]="{'btn-secondary': isReady, 'btn-warning': !isReady}">
   {{groupPick}}
 </button>
 
@@ -21,18 +21,16 @@
             </div>
             <h5>Search:</h5>
             <div class="input-group mb-3">
-              <span class="input-group-text">Corp Search</span>
               <input class="form-control" [(ngModel)]="corpSearchText" placeholder="Search Corp Names" [ngbTypeahead]="searchCorps" [resultFormatter]="searchCorpsFormatter" (selectItem)="selectedFoundCorp($event)">
             </div>
             <div class="input-group">
-              <span class="input-group-text">Player Search</span>
               <input class="form-control" [(ngModel)]="playerSearchText" placeholder="Search User Names" [ngbTypeahead]="searchPlayers" [resultFormatter]="searchPlayersFormatter" (selectItem)="selectedFoundPlayer($event)">
             </div>
           </div>
         </div>
         <div class="col">
           <div>
-            <h5 class="card-title">Players: 
+            <h5 class="card-title">Players:
               <div class="btn-group ml-3">
                 <button class="btn btn-light" (click)="selectAll()">Select All</button>
                 <button class="btn btn-light" (click)="deselectAll()">Select None</button>
@@ -41,7 +39,7 @@
             </h5>
           </div>
           <div>
-            <ul class="list-group list-group-flush scroll-list">
+            <ul class="list-group list-group-flush scroll-list player-list">
               <li class="list-group-item clickable" *ngFor="let player of players" (click)="player.selected = !player.selected">
                 <input type="checkbox" [(ngModel)]="player.selected">
                 {{player.name}}
@@ -49,7 +47,6 @@
             </ul>
           </div>
         </div>
-
       </div>
     </div>
   </div>

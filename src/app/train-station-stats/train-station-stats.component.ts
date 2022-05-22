@@ -18,7 +18,13 @@ export class TrainStationStatsComponent implements OnInit {
   get isLoading() {
     return this._isLoading || !this.idSelector || this.idSelector.isLoading;
   }
-  
+
+  currencyFormatter = (currency, sign) => {
+    var sansDec = currency.toFixed(0);
+    var formatted = sansDec.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return sign + `${formatted}`;
+  };
+
   @ViewChild(IdsSelectorComponent)
   private idSelector: IdsSelectorComponent;
 
@@ -34,7 +40,7 @@ export class TrainStationStatsComponent implements OnInit {
   columnDefs: ColDef[] = [
     { field: 'user', pinned: true } as ColDef,
     { field: 'corporation', pinned: true },
-    { field: 'suggestedWorkerBid', cellStyle: { 'background-color': 'yellow' }, pinned: true, comparator: this.numberComparator },
+    { field: 'totalWorkerValue', cellStyle: { 'background-color': '#28a745' }, pinned: true, comparator: this.numberComparator, valueFormatter: params => this.currencyFormatter(params.data.totalWorkerValue, '$') },
   ].concat(StaticBuildingData.AllBuildings.map((b) => ({
     field: b.name, comparator: this.numberComparator,
     cellRenderer: params => {
@@ -42,15 +48,15 @@ export class TrainStationStatsComponent implements OnInit {
         return '';
       }
       const percent = Math.floor(100 * params.value / b.maxLevel);
-      return `<p style="background: linear-gradient(90deg, #00ffff59 ${percent}%, #00000000 0%);">${params.value}</p>`;
+      return `<p style="background: linear-gradient(90deg, #CCCCCC59 ${percent}%, #00000000 0%);">${params.value}</p>`;
     }
   })))
   .concat([
     { field: 'totalLevels', comparator: this.numberComparator },
     { field: 'prestigeLeft', comparator: this.numberComparator },
-    { field: 'dailyMoney', comparator: this.numberComparator },
+    { field: 'dailyMoney', comparator: this.numberComparator, valueFormatter: params => this.currencyFormatter(params.data.dailyMoney, '$') },
     { field: 'dailyPrestige', comparator: this.numberComparator },
-    { field: 'workerMoneyBonus', comparator: this.numberComparator },
+    { field: 'workerMoneyBonus', comparator: this.numberComparator, valueFormatter: params => this.currencyFormatter(params.data.workerMoneyBonus, '$') },
     { field: 'workerPrestigeBonus', comparator: this.numberComparator },
   ]);
 
@@ -75,7 +81,7 @@ export class TrainStationStatsComponent implements OnInit {
     const serverInfo = await this.getServerInfo();
     // TODO: Figure out if I can get the period data with a service call. Only 'default' and 'speed' seem like options right now
     switch (serverInfo.speed) {
-      case 'speed': // 2x 
+      case 'speed': // 2x
         this.restaurantPeriod = 45;
         this.shoppingCenterPeriod = 180;
         this.hotelPeriod = 90;
@@ -95,7 +101,7 @@ export class TrainStationStatsComponent implements OnInit {
 
     for (const user of users) {
       const corp = await this.getCorpDetails(user.corpId);
-      this.userData.set(user.id, { user: user.name, corporation: corp.name, totalLevels: 0, prestigeLeft: 0, dailyMoney: 0, dailyPrestige: 0, workerMoneyBonus: 0, workerPrestigeBonus: 0, suggestedWorkerBid: 0 });
+      this.userData.set(user.id, { user: user.name, corporation: corp.name, totalLevels: 0, prestigeLeft: 0, dailyMoney: 0, dailyPrestige: 0, workerMoneyBonus: 0, workerPrestigeBonus: 0, totalWorkerValue: 0 });
     }
     this.updateRows();
     await this.getBuildings(users.map(user => user.id));
@@ -138,7 +144,7 @@ export class TrainStationStatsComponent implements OnInit {
       currentData.dailyPrestige = this.getDailyBonusPrestige(hotelLevel, false);
       currentData.workerMoneyBonus = this.getDailyBonusMoney(restaurantLevel, shoppingCenterLevel, hotelLevel, true) - currentData.dailyMoney;
       currentData.workerPrestigeBonus = this.getDailyBonusPrestige(hotelLevel, true) - currentData.dailyPrestige;
-      currentData.suggestedWorkerBid = currentData.workerMoneyBonus + (currentData.workerPrestigeBonus * 10000);
+      currentData.totalWorkerValue = currentData.workerMoneyBonus + (currentData.workerPrestigeBonus * 10000);
 
       this.updateRows();
     }

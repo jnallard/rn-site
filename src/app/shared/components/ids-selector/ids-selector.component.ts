@@ -14,11 +14,11 @@ import { Player } from '../../types/player.type';
   styleUrls: ['./ids-selector.component.css']
 })
 export class IdsSelectorComponent implements OnInit {
-  private readonly defaultGroup = 'Please Select';
+  private readonly defaultGroup = 'Select Player(s)';
   selectorVisible = false;
   groupPick = this.defaultGroup;
   players: Player[] = [];
-  
+
   myCorpId: string;
   isLoading = true;
   playerSearchText = '';
@@ -26,7 +26,7 @@ export class IdsSelectorComponent implements OnInit {
   get isReady() {
     return this.getSelectedPlayers().length > 0;
   }
-  
+
   @Input('defaultId') defaultId = '';
 
   constructor(
@@ -87,7 +87,7 @@ export class IdsSelectorComponent implements OnInit {
     this.players = this.players
       .filter(player => !newPlayers.find(newPlayer => player.id === newPlayer.id))
       .concat(newPlayers);
-    
+
   }
 
   updateGroupPick(group: string) {
