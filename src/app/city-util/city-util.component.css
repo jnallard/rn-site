@@ -39,4 +39,9 @@
   border-top: 2px solid #343a40!important;
   border-left: 2px solid #343a40!important;
   border-top-left-radius: 10px;
+  background-color: white;
+}
+
+.load-cities-button {
+  width: 200px;
 }

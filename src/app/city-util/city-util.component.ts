@@ -65,19 +65,6 @@ export class CityUtilComponent implements OnInit {
     this.cities.sort((cityA, cityB) => cityA.name.localeCompare(cityB.name));
   }
 
-  async selectMany(isSelected: boolean) {
-    this.cities.forEach(city => city.selected = isSelected)
-    await this.loadData();
-  }
-
-  async toggleCity(city: City) {
-    city.selected = !city.selected;
-    this.visibleCities = this.cities.filter(city => city.selected);
-    if (city.selected) {
-      await this.loadSingleCity(city);
-    }
-  }
-
   private async loadCity(city: City, errors: string[]) {
     try {
       city.loading = true;
@@ -86,7 +73,7 @@ export class CityUtilComponent implements OnInit {
       let tasks = [] as Promise<CityTransportResponse>[];
       for (let rg of city.allRgs) {
         tasks.push(
-          this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.playerRank)
+          this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.myRank)
             .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse, CityUtilComponent.CurrentId))).
             toPromise()
         );

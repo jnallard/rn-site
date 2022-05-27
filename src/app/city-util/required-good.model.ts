@@ -13,6 +13,7 @@ export class RequiredGood {
   goalAmount: number;
   lastAmount: number;
   consumptionPercent: number;
+  myRank: number;
   playerRank: number;
   isPaxAndComplete: boolean;
   prestige: number = null;
@@ -33,6 +34,7 @@ export class RequiredGood {
     this.goalAmount = (resource.Limit * 0.67) / (1 - resource.ConsumptionAmount);
     this.percentDelivered = Math.min(Math.floor((resource.Amount / this.goalAmount) * 1000) / 10, 100);
     this.isPaxAndComplete = resource.ResourceId === 49 && resource.LastAmount === resource.Limit;
+    this.myRank = resource.PositionOfPlayer;
   }
   setPrestige(response: CityTransportResponse, userId: string) {
     this.cityTransportResponse = response;
