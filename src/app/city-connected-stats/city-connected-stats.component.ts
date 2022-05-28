@@ -93,7 +93,7 @@ export class CityConnectedStatsComponent implements OnInit {
   }
 
   export() {
-    this.gridAPI.exportDataAsCsv({ fileName: 'conenected-cities.csv' });
+    this.gridAPI.exportDataAsCsv({ fileName: 'connected-cities.csv' });
   }
 
   onGridReady(event: GridReadyEvent) {

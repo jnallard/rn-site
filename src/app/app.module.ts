@@ -18,6 +18,7 @@ import { AppComponent } from './app.component';
 import { CityConnectedStatsComponent } from './city-connected-stats/city-connected-stats.component';
 import { CityUtilComponent } from './city-util/city-util.component';
 import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
+import { CompetitionsComponent } from './competitions/competitions.component';
 import { EndgameCorpStatsComponent } from './endgame-corp-stats/endgame-corp-stats.component';
 import { HomeComponent } from './home/home.component';
 import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
@@ -34,6 +35,7 @@ const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'city-util', component: CityUtilComponent },
   { path: 'city-connected-stats', component: CityConnectedStatsComponent },
+  { path: 'competitions', component: CompetitionsComponent },
   { path: 'endgame-corp-stats', component: EndgameCorpStatsComponent },
   { path: 'player-ranks', component: PlayerRanksComponent },
   { path: 'train-station-stats', component: TrainStationStatsComponent },
@@ -45,6 +47,7 @@ const appRoutes: Routes = [
     AppComponent,
     CityUtilComponent,
     CityConnectedStatsComponent,
+    CompetitionsComponent,
     EndgameCorpStatsComponent,
     HomeComponent,
     IdsSelectorComponent,
