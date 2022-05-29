@@ -4,6 +4,7 @@ import { ConfirmationModalComponent } from '../shared/components/confirmation-mo
 import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { StaticCityData } from '../shared/data/static-city.data';
 import { CityTransportResponse } from '../shared/models/city-transport-response.model';
+import { AccountService } from '../shared/services/account.service';
 import { CityService } from '../shared/services/city.service';
 import { ModalService } from '../shared/services/modal.service';
 import { SettingsService } from '../shared/services/settings.service';
@@ -22,8 +23,10 @@ export class CityUtilComponent implements OnInit {
 
   public static BestPPRatio = -1;
   public static CurrentId = '';
+  private lastConsumptionTime: Date;
+  timeBeforeConsumption = '';
 
-  constructor(private cityService: CityService, private modalService: ModalService, public settings: SettingsService) { }
+  constructor(private cityService: CityService, private modalService: ModalService, public settings: SettingsService, private accountService: AccountService) { }
 
   SortMode = SortMode;
   _sortMode = localStorage.getItem('cities.sortMode') as SortMode ?? SortMode.Alpha;
@@ -63,6 +66,21 @@ export class CityUtilComponent implements OnInit {
   ngOnInit(): void {
     CityUtilComponent.BestPPRatio = -1;
     this.cities.sort((cityA, cityB) => cityA.name.localeCompare(cityB.name));
+    this.loadConsumptionTime().then();
+  }
+
+  async loadConsumptionTime() {
+    const serverInfo = await this.accountService.getServerInfo().toPromise();
+    this.lastConsumptionTime = new Date();
+    this.lastConsumptionTime.setSeconds(this.lastConsumptionTime.getSeconds() + +serverInfo.config['lastConsumption']);
+    setInterval(() => {
+      const consumptionPeriod = 60 * 15;
+      const timeElapsedMs = Math.floor((new Date().getTime() - this.lastConsumptionTime.getTime()) / 1000);
+      const secondsLeft = consumptionPeriod - (timeElapsedMs % consumptionPeriod);
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = Math.floor(secondsLeft % 60);
+      this.timeBeforeConsumption = `${minutes}m ${seconds}s`;
+    });
   }
 
   private async loadCity(city: City, errors: string[]) {

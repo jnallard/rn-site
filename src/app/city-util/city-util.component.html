@@ -3,6 +3,9 @@
     <h1>Cities - <small>Total PP: {{getTotalPrestigePoints()}} <i class="fa fa-spinner fa-spin" aria-hidden="true" *ngIf="isAnyCityLoading()"></i></small>
       <span class="float-right">
         <div class="form-inline d-flex align-items-center">
+          <div class="input-group">
+            <span class="input-group-text">{{timeBeforeConsumption}}</span>
+          </div>
           <div class="col" *ngIf="settings.userId">
             <app-ids-selector [defaultId]="settings.userId"></app-ids-selector>
           </div>
