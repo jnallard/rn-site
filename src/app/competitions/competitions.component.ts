@@ -53,6 +53,15 @@ export class CompetitionsComponent {
     return `${minutes}m`;
   };
 
+  getRowStyle = (params) => {
+    if (params.data.playerCompleted) {
+      return { 'background-color': '#2cff002f' };
+    }
+    if (params.data.playerAccepted) {
+      return { 'background-color': '#ffff002f' };
+    }
+  }
+
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'city' } as ColDef,
@@ -161,7 +170,6 @@ export class CompetitionsComponent {
         comp.durationLeft = duration;
       })
       event.api.refreshCells();
-    }, 500)
-    
+    }, 500);
   }
 }
