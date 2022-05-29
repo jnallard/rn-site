@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, IFilterComp } from 'ag-grid-community';
 import { CompService } from '../shared/services/comp.service';
 
 @Component({
@@ -57,6 +57,43 @@ export class CompetitionsComponent {
   columnDefs: ColDef[] = [
     { field: 'city' } as ColDef,
     { field: 'resource' },
+    { field: 'rewardType',
+      cellRenderer: params => {
+        let faIcon = '';
+        let faColor = '';
+        let boldText = '';
+        switch(params.value) {
+          case 'Prestige':
+            faIcon = 'fa-crown';
+            faColor = 'purple';
+            boldText = `(${params.data.rewardPrestige})`;
+            break;
+          case 'Lottery':
+            faIcon = 'fa-ticket-alt';
+            faColor = 'green';
+            break;
+          case 'Gold/Plus':
+            faIcon = 'fa-coins';
+            faColor = 'goldenrod';
+            break;
+          case 'License':
+            faIcon = 'fa-file-signature';
+            faColor = 'darkgray';
+            break;
+          case 'Cargo Train':
+            faIcon = 'fa-train';
+            faColor = 'red';
+            break;
+          case 'Research':
+            faIcon = 'fa-microscope';
+            faColor = 'blue';
+            break;
+        }
+        return `<i class="fas ${faIcon}" style="color: ${faColor}"></i> ${params.value} <strong>${boldText}</strong>`;
+      },
+      filterParams: {}
+    },
+    { field: 'rewardMoney', filter: 'agNumberColumnFilter', valueFormatter: params => this.currencyFormatter(params.data.rewardMoney, '$'), headerName: 'Money' },
     { field: 'startTime', filter: 'agNumberColumnFilter', valueFormatter: params => this.timeFormatter(params.value) },
     { field: 'startsIn', filter: 'agNumberColumnFilter', valueFormatter: params => this.getTimeRemaining(params.value) },
     { field: 'durationLeft', filter: 'agNumberColumnFilter', valueFormatter: params => this.durationFormatter(params.value), headerName: 'Duration Left',
@@ -74,9 +111,6 @@ export class CompetitionsComponent {
         return `<p style="background: linear-gradient(90deg, ${color} ${percent}%, #00000000 0%);">${this.durationFormatter(duration)}</p>`;
       }
     },
-    { field: 'rewardType' },
-    { field: 'rewardMoney', filter: 'agNumberColumnFilter', valueFormatter: params => this.currencyFormatter(params.data.rewardMoney, '$'), headerName: 'Money' },
-    { field: 'rewardPrestige', filter: 'agNumberColumnFilter', headerName: 'Prestige' },
   ];
 
   defaultColDef = {
