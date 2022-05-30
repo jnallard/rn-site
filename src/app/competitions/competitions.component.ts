@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ColDef, GridApi, GridReadyEvent, IFilterComp } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { CompService } from '../shared/services/comp.service';
 
 @Component({
@@ -146,7 +146,7 @@ export class CompetitionsComponent {
   }
 
   updateRows() {
-    this.gridAPI.sizeColumnsToFit();
+    setTimeout(() => this.gridAPI.sizeColumnsToFit(), 100);
   }
 
   export() {
