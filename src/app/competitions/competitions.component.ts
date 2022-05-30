@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { Comp } from '../shared/models/comp.model';
 import { CompService } from '../shared/services/comp.service';
 
 @Component({
@@ -7,14 +8,15 @@ import { CompService } from '../shared/services/comp.service';
   templateUrl: './competitions.component.html',
   styleUrls: ['./competitions.component.css'],
 })
-export class CompetitionsComponent {
+export class CompetitionsComponent implements OnDestroy {
 
   _isLoading = true;
   get isLoading() {
     return this._isLoading;
   }
 
-  rowData: any[] = [];
+  rowData: Comp[] = [];
+  intervals: NodeJS.Timeout[] = [];
 
   currencyFormatter = (currency, sign) => {
     var sansDec = currency.toFixed(0);
@@ -53,6 +55,14 @@ export class CompetitionsComponent {
     return `${minutes}m`;
   };
 
+  amountFormatter = (comp: Comp) => {
+    let amount = `${comp.playerAmount} / ${comp.amount}`;
+    if(comp.playerPosition) {
+      amount += ` (#${comp.playerPosition})`;
+    }
+    return amount;
+  }
+
   getRowStyle = (params) => {
     if (params.data.playerCompleted) {
       return { 'background-color': '#2cff002f' };
@@ -62,10 +72,13 @@ export class CompetitionsComponent {
     }
   }
 
+  getRowId = (params) => params.data.id;
+
   private gridAPI: GridApi;
   columnDefs: ColDef[] = [
     { field: 'city' } as ColDef,
     { field: 'resource' },
+    { field: 'amount', valueFormatter: params => this.amountFormatter(params.data) },
     { field: 'rewardType',
       cellRenderer: params => {
         let faIcon = '';
@@ -133,6 +146,10 @@ export class CompetitionsComponent {
     private compService: CompService,
   ) { }
 
+  ngOnDestroy(): void {
+    this.intervals.forEach(interval => clearInterval(interval));
+  }
+
   async loadData() {
     this._isLoading = true;
     await this.getComps();
@@ -157,8 +174,8 @@ export class CompetitionsComponent {
     this.gridAPI = event.api;
     event.api.sizeColumnsToFit();
     this.loadData().then();
-    setInterval(() => {
-      this.rowData.forEach(comp => {
+    this.intervals.push(setInterval(() => {
+      this.getAllRows().forEach(comp => {
         let duration = comp.duration;
         if (!duration) {
           return '';
@@ -168,8 +185,22 @@ export class CompetitionsComponent {
           duration += secondsFromStartTime;
         }
         comp.durationLeft = duration;
+        event.api.applyTransaction({update: [comp]});
       })
       event.api.refreshCells();
-    }, 500);
+    }, 500));
+    this.intervals.push(setInterval((async () => {
+      this.getAllRows().filter(comp => comp.durationLeft > 0 && comp.durationLeft < comp.duration && !comp.playerCompleted).forEach(async comp => {
+        let updatedComp = await this.compService.getComp(comp.id).toPromise();
+        updatedComp.durationLeft = comp.durationLeft;
+        event.api.applyTransaction({update: [updatedComp]});
+      });
+    }), 5000));
+  }
+
+  getAllRows() {
+    let rowData = [] as Comp[];
+    this.gridAPI.forEachNode(node => rowData.push(node.data));
+    return rowData;
   }
 }
