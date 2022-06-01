@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ServerInfo } from '../models/server-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,8 @@ export class SettingsService {
   }
 
   userId: string;
+
+  serverInfo: ServerInfo;
 
   constructor() { }
 }

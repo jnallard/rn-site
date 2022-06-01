@@ -11,7 +11,13 @@ import { SettingsService } from '../shared/services/settings.service';
 import { City } from './city.model';
 
 enum SortMode {
-  Alpha = 'alpha', Growth = 'growth', Level = 'level', Prestige = 'prestige', Pax = 'pax', PPPerTon = 'ppPerTon'
+  Alpha = 'alpha',
+  Growth = 'growth',
+  Level = 'level',
+  Prestige = 'prestige',
+  Pax = 'pax',
+  PPPerTon = 'ppPerTon',
+  Investements = 'investments',
 }
 
 @Component({
@@ -61,7 +67,7 @@ export class CityUtilComponent implements OnInit {
 
   visibleCities: City[] = [];
 
-  cities: City[] = StaticCityData.AllCities.map(city => new City(city.name, city.id));
+  cities: City[] = StaticCityData.getAllCities(this.settings.serverInfo).map(city => new City(city.name, city.id));
 
   ngOnInit(): void {
     CityUtilComponent.BestPPRatio = -1;
@@ -70,7 +76,7 @@ export class CityUtilComponent implements OnInit {
   }
 
   async loadConsumptionTime() {
-    const serverInfo = await this.accountService.getServerInfo().toPromise();
+    const serverInfo = this.settings.serverInfo;
     this.lastConsumptionTime = new Date();
     this.lastConsumptionTime.setSeconds(this.lastConsumptionTime.getSeconds() + +serverInfo.config['lastConsumption']);
     setInterval(() => {
@@ -98,6 +104,10 @@ export class CityUtilComponent implements OnInit {
       }
       if(tasks.length > 0) {
         await Promise.all(tasks);
+      }
+      if(city.paxRg) {
+        let investmentResponse = await this.cityService.getInvestments(city.id).toPromise();
+        city.setInvestementResponse(investmentResponse, CityUtilComponent.CurrentId);
       }
       city.loading = false;
     } catch (error) {
@@ -166,6 +176,9 @@ export class CityUtilComponent implements OnInit {
         return;
       case SortMode.PPPerTon:
         this.visibleCities.sort((a, b) => b.getBestPpRatio(CityUtilComponent.CurrentId) - a.getBestPpRatio(CityUtilComponent.CurrentId));
+        return;
+      case SortMode.Investements:
+        this.visibleCities.sort((a, b) => (b.investmentRank ?? 1000) - (a.investmentRank ?? 1000));
         return;
     }
   }

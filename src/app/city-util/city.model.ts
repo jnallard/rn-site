@@ -1,6 +1,7 @@
 import { CityResponse } from "../shared/models/city-response.model";
 import { RequiredGood } from "./required-good.model";
 import { Md5 } from 'ts-md5/dist/md5';
+import { CityInvestmentResponse } from "../shared/models/city-investment-response.model";
 
 export class City {
     rgs: RequiredGood[] | null = null;
@@ -8,6 +9,7 @@ export class City {
     level: number;
     hash: string;
     loading = false;
+    investmentRank = null;
 
     selected = false;
 
@@ -33,6 +35,11 @@ export class City {
             this.paxRg = new RequiredGood(paxStorage);
         }
         this.level = cityResponse.Level;
+    }
+
+    setInvestementResponse(investmentResponse: CityInvestmentResponse, userId: string) {
+        const investmentRank = investmentResponse.Result.findIndex(response => response.Player === userId);
+        this.investmentRank = investmentRank > -1 ? investmentRank + 1 : null;
     }
 
     getPercentDone() {

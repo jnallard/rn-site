@@ -6,6 +6,7 @@ import { AccountService } from '../shared/services/account.service';
 import { BuildingService } from '../shared/services/building.service';
 import { CorpService } from '../shared/services/corp.service';
 import { PlayerService } from '../shared/services/player.service';
+import { SettingsService } from '../shared/services/settings.service';
 
 @Component({
   selector: 'app-train-station-stats',
@@ -71,6 +72,7 @@ export class TrainStationStatsComponent implements OnInit {
     private playerService: PlayerService,
     private corpService: CorpService,
     private buildingService: BuildingService,
+    private settings: SettingsService,
   ) { }
 
   ngOnInit(): void {
@@ -113,7 +115,7 @@ export class TrainStationStatsComponent implements OnInit {
   }
 
   async getServerInfo() {
-    return await this.accountService.getServerInfo().toPromise();
+    return this.settings.serverInfo;
   }
 
   async getCorpDetails(corpId: string) {

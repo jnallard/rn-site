@@ -3,6 +3,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { StaticCityData } from '../shared/data/static-city.data';
 import { CityService } from '../shared/services/city.service';
+import { SettingsService } from '../shared/services/settings.service';
 
 @Component({
   selector: 'app-city-connected-stats',
@@ -19,7 +20,7 @@ export class CityConnectedStatsComponent implements OnInit {
   @ViewChild(IdsSelectorComponent)
   private idSelector: IdsSelectorComponent;
 
-  cities = StaticCityData.AllCities.slice();
+  cities = StaticCityData.getAllCities(this.settings.serverInfo).slice();
   cityData = new Map<string, any>();
   rowData: any[] = [];
 
@@ -43,6 +44,7 @@ export class CityConnectedStatsComponent implements OnInit {
 
   constructor(
     private cityService: CityService,
+    private settings: SettingsService,
   ) { }
 
   ngOnInit(): void {

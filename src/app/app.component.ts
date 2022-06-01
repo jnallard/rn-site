@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, mergeMap, tap } from 'rxjs/operators';
 import { AccountService } from './shared/services/account.service';
 import { SettingsService } from './shared/services/settings.service';
 
@@ -54,7 +54,11 @@ export class AppComponent implements OnInit {
   getUserId() {
     this.isLoading = true;
     this.error = null;
-    this.accountService.getUserId().pipe(finalize(() => this.isLoading = false)).subscribe(userId => {
+    this.accountService.getServerInfo().pipe(
+      finalize(() => this.isLoading = false),
+      tap(serverInfo => this.settings.serverInfo = serverInfo),
+      mergeMap(() => this.accountService.getUserId())
+    ).subscribe(userId => {
       this.error = null;
       this.settings.userId = userId;
     }, error => {
