@@ -14,10 +14,11 @@ router.get('/', function(req, res, next) {
   const urlQueryPath = req.query.urlQueryPath;
   const hash = Md5.hashAsciiStr(req.query.param);
   console.log({ hash });
+  const domain = server.includes('.') ? server : `${server}.railnation-game.com`;
   
   axios({
     method: "post",
-    url: `https://${server}.railnation-game.com/web/rpc/flash.php?${urlQueryPath}`,
+    url: `https://${domain}/web/rpc/flash.php?${urlQueryPath}`,
     data: {"client":1,"checksum":-1,"parameters":parameters,"hash":hash},
     headers: { cookie: cookie }
   }).then(r => {

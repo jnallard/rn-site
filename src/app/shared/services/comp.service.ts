@@ -10,7 +10,7 @@ import { SettingsService } from './settings.service';
   providedIn: 'root'
 })
 export class CompService extends BaseProxyService {
-  private cityDict = StaticCityData.getCityDictionary();
+  private cityDict = StaticCityData.getCityDictionary(this.settings.serverInfo);
 
   constructor(httpClient: HttpClient, settings: SettingsService) {
     super(httpClient, settings);

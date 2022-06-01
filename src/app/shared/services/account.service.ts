@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
 import { SearchResponse } from '../models/search-response.model';
+import { ServerInfo } from '../models/server-info.model';
 import { BaseProxyService } from './base-proxy.service';
 import { SettingsService } from './settings.service';
 
@@ -38,16 +39,18 @@ export class AccountService extends BaseProxyService {
   getServerInfo() {
     const param = `[]`;
     const urlQueryPath = 'interface=ServerInfoInterface&method=getInfo&short=60411';
-    return this.get<{config: string}>(urlQueryPath, param).pipe(map(config => {
+    return this.get<{config: string, townNamePackage: string}>(urlQueryPath, param).pipe(map(config => {
       const configName = config.config;
       const configParts = configName.split('/');
       const scenario = configParts[0];
       const speed = configParts[1].replace(/[^a-zA-Z]+/g, '');
+      const townNamePackage = config.townNamePackage;
       return {
         scenario,
         speed,
         config,
-      }
+        townNamePackage,
+      } as ServerInfo;
     }));
   }
 

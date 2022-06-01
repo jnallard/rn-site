@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { StaticCityData } from '../data/static-city.data';
+import { CityInvestmentResponse } from '../models/city-investment-response.model';
 import { CityResponse } from '../models/city-response.model';
 import { CityTransportResponse } from '../models/city-transport-response.model';
 import { BaseProxyService } from './base-proxy.service';
@@ -38,7 +39,7 @@ export class CityService extends BaseProxyService {
         destIds.add(route.FromId);
         destIds.add(route.ToId);
       });
-      let staticCities = StaticCityData.getCityDictionary();
+      let staticCities = StaticCityData.getCityDictionary(this.settings.serverInfo);
       let ids = Array.from(destIds.entries()).map(e => e[1]).filter(id => staticCities[id]);
       return ids;
     }));
@@ -46,5 +47,11 @@ export class CityService extends BaseProxyService {
 
   getMyCityIDs() {
     return this.getCityIDs(this.settings.userId);
+  }
+
+  getInvestments(cityId: string) {
+    let param = `["${cityId}",0,999]`;
+    let urlQueryPath = 'interface=LocationInterface&method=getPassengerSalePromotionRanking&short=96';
+    return this.get<CityInvestmentResponse>(urlQueryPath, param);
   }
 }

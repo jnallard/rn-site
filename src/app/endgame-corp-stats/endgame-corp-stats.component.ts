@@ -5,6 +5,7 @@ import { StaticResourceData } from '../shared/data/static-resource.data';
 import { AccountService } from '../shared/services/account.service';
 import { CorpService } from '../shared/services/corp.service';
 import { PlayerService } from '../shared/services/player.service';
+import { SettingsService } from '../shared/services/settings.service';
 
 @Component({
   selector: 'app-endgame-corp-stats',
@@ -16,7 +17,7 @@ export class EndgameCorpStatsComponent implements OnInit {
   myCorpId = '';
 
   isLoading = true;
-  cities = StaticCityData.AllCities.slice(0);
+  cities = StaticCityData.getAllCities(this.settings.serverInfo).slice(0);
   cityId: string;
   corpSelection = 'mine';
 
@@ -40,7 +41,8 @@ export class EndgameCorpStatsComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private playerService: PlayerService,
-    private corpService: CorpService
+    private corpService: CorpService,
+    private settings: SettingsService,
   ) {}
 
   ngOnInit(): void {

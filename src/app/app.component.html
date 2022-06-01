@@ -67,6 +67,6 @@
 <div class="container" *ngIf="isLoading">
   Loading user...
 </div>
-<div *ngIf="settings.cookie && settings.server && settings.userId">
+<div *ngIf="settings.cookie && settings.server && settings.userId && !isLoading">
   <router-outlet></router-outlet>
 </div>

@@ -7,7 +7,6 @@ import {
   ApexPlotOptions,
   ApexLegend
 } from "ng-apexcharts";
-import { SettingsService } from "src/app/shared/services/settings.service";
 import { CityUtilComponent } from "../city-util.component";
 import { City } from "../city.model";
 import { RequiredGood } from "../required-good.model";
@@ -33,7 +32,7 @@ export class RgChartComponent implements OnInit {
   public chartOptions: ChartOptions = new ChartOptions();
   public paxChartOptions: ChartOptions = new ChartOptions();
 
-  constructor(private settings: SettingsService) { }
+  constructor() { }
 
   ngOnInit(): void {
     let firstRg = this.city?.rgs?.[0];
