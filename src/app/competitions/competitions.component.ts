@@ -1,7 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { Comp } from '../shared/models/comp.model';
 import { CompService } from '../shared/services/comp.service';
+import { SubscribeButtonRenderer } from './subscribe-button.renderer';
 
 @Component({
   selector: 'app-competitions',
@@ -15,6 +16,9 @@ export class CompetitionsComponent implements OnDestroy {
     return this._isLoading;
   }
 
+  gridOptions: GridOptions = {
+    components: SubscribeButtonRenderer
+  };
   rowData: Comp[] = [];
   intervals: NodeJS.Timeout[] = [];
 
@@ -24,12 +28,8 @@ export class CompetitionsComponent implements OnDestroy {
     return sign + `${formatted}`;
   };
 
-  getSecondsRemaining = (time: Date) => {
-    return (time.getTime() - new Date().getTime()) / 1000;
-  }
-
-  getTimeRemaining = (time: Date) => {
-    const timeSeconds = this.getSecondsRemaining(time);
+  getTimeRemaining = (comp: Comp) => {
+    const timeSeconds = comp.getSecondsRemainingUntilStart();
     if(timeSeconds < 0) {
       return '';
     }
@@ -117,14 +117,15 @@ export class CompetitionsComponent implements OnDestroy {
     },
     { field: 'rewardMoney', filter: 'agNumberColumnFilter', valueFormatter: params => this.currencyFormatter(params.data.rewardMoney, '$'), headerName: 'Money' },
     { field: 'startTime', filter: 'agNumberColumnFilter', valueFormatter: params => this.timeFormatter(params.value) },
-    { field: 'startsIn', filter: 'agNumberColumnFilter', valueFormatter: params => this.getTimeRemaining(params.value) },
+    { field: 'startsIn', filter: 'agNumberColumnFilter', valueFormatter: params => this.getTimeRemaining(params.data) },
     { field: 'durationLeft', filter: 'agNumberColumnFilter', valueFormatter: params => this.durationFormatter(params.value), headerName: 'Duration Left',
       cellRenderer: params => {
-        let duration = params.value;
+        const comp = params.data as Comp;
+        let duration = comp.durationLeft;
         if (!duration) {
           return '';
         }
-        const secondsFromStartTime = this.getSecondsRemaining(params.data.startTime);
+        const secondsFromStartTime = comp.getSecondsRemainingUntilStart();
         let color = '#CCCCCC59';
         if(secondsFromStartTime < 0) {
           color = '#00aa0059';
@@ -133,6 +134,11 @@ export class CompetitionsComponent implements OnDestroy {
         return `<p style="background: linear-gradient(90deg, ${color} ${percent}%, #00000000 0%);">${this.durationFormatter(duration)}</p>`;
       }
     },
+    { field: 'Subscribe?', cellRenderer: SubscribeButtonRenderer, cellRendererParams: {
+      clicked: (comp: Comp) => {
+        console.log(comp);
+      }
+    } },
   ];
 
   defaultColDef = {
@@ -144,7 +150,11 @@ export class CompetitionsComponent implements OnDestroy {
 
   constructor(
     private compService: CompService,
-  ) { }
+  ) { 
+    
+  let promise = Notification.requestPermission();
+  promise.then(t => console.log(t));
+  }
 
   ngOnDestroy(): void {
     this.intervals.forEach(interval => clearInterval(interval));
@@ -176,15 +186,7 @@ export class CompetitionsComponent implements OnDestroy {
     this.loadData().then();
     this.intervals.push(setInterval(() => {
       this.getAllRows().forEach(comp => {
-        let duration = comp.duration;
-        if (!duration) {
-          return '';
-        }
-        const secondsFromStartTime = this.getSecondsRemaining(comp.startTime);
-        if(secondsFromStartTime < 0) {
-          duration += secondsFromStartTime;
-        }
-        comp.durationLeft = duration;
+        comp.update();
         event.api.applyTransaction({update: [comp]});
       })
       event.api.refreshCells();
@@ -192,7 +194,6 @@ export class CompetitionsComponent implements OnDestroy {
     this.intervals.push(setInterval((async () => {
       this.getAllRows().filter(comp => comp.durationLeft > 0 && comp.durationLeft < comp.duration && !comp.playerCompleted).forEach(async comp => {
         let updatedComp = await this.compService.getComp(comp.id).toPromise();
-        updatedComp.durationLeft = comp.durationLeft;
         event.api.applyTransaction({update: [updatedComp]});
       });
     }), 5000));

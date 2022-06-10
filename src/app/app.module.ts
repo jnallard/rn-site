@@ -19,6 +19,7 @@ import { CityConnectedStatsComponent } from './city-connected-stats/city-connect
 import { CityUtilComponent } from './city-util/city-util.component';
 import { RgChartComponent } from './city-util/rg-chart/rg-chart.component';
 import { CompetitionsComponent } from './competitions/competitions.component';
+import { SubscribeButtonRenderer } from './competitions/subscribe-button.renderer';
 import { EndgameCorpStatsComponent } from './endgame-corp-stats/endgame-corp-stats.component';
 import { HomeComponent } from './home/home.component';
 import { PlayerRanksComponent } from './player-ranks/player-ranks.component';
@@ -54,6 +55,7 @@ const appRoutes: Routes = [
     ConfirmationModalComponent,
     RgChartComponent,
     PlayerRanksComponent,
+    SubscribeButtonRenderer,
     TrainStationStatsComponent,
   ],
   imports: [
@@ -78,7 +80,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     NgbModule,
     NgApexchartsModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([SubscribeButtonRenderer])
   ],
   providers: [],
   bootstrap: [AppComponent]
