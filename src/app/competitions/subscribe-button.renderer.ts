@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { ICellRendererAngularComp } from "ag-grid-angular";
-import { ICellRendererParams } from "ag-grid-community";
 import { Comp } from "../shared/models/comp.model";
 
 @Component({
@@ -15,30 +14,30 @@ export class SubscribeButtonRenderer implements ICellRendererAngularComp {
     private clicked: (comp: Comp) => void;
 
     private static readonly subscribedComps: string[] = [];
-
-    get isSubscribed() {
-        return SubscribeButtonRenderer.subscribedComps.includes(this.comp.id);
+    public static isCompSubscribed(comp: Comp) {
+        return SubscribeButtonRenderer.subscribedComps.includes(comp.id);
     }
 
+    get isSubscribed() {
+        return SubscribeButtonRenderer.isCompSubscribed(this.comp);
+    }
 
     agInit(params: any): void {
         this.comp = params.data;
         this.clicked = params.clicked;
     }
 
-    subscribe(event: any) {
-        this.clicked(this.comp);
+    subscribe() {
         SubscribeButtonRenderer.subscribedComps.push(this.comp.id)
-        new Notification('test');
-    }
-
-    unsubscribe(event: any) {
         this.clicked(this.comp);
-        SubscribeButtonRenderer.subscribedComps.splice(SubscribeButtonRenderer.subscribedComps.indexOf(this.comp.id, 1));
-        new Notification('test');
     }
 
-    refresh(params: ICellRendererParams): boolean {
+    unsubscribe() {
+        SubscribeButtonRenderer.subscribedComps.splice(SubscribeButtonRenderer.subscribedComps.indexOf(this.comp.id, 1));
+        this.clicked(this.comp);
+    }
+
+    refresh(): boolean {
         return true;
     }
 }

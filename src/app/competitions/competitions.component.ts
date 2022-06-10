@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
-import { Comp } from '../shared/models/comp.model';
+import { Comp, CompStatus } from '../shared/models/comp.model';
 import { CompService } from '../shared/services/comp.service';
 import { SubscribeButtonRenderer } from './subscribe-button.renderer';
 
@@ -21,6 +21,8 @@ export class CompetitionsComponent implements OnDestroy {
   };
   rowData: Comp[] = [];
   intervals: NodeJS.Timeout[] = [];
+
+  compStatuses = new Map<string, CompStatus>();
 
   currencyFormatter = (currency, sign) => {
     var sansDec = currency.toFixed(0);
@@ -136,7 +138,7 @@ export class CompetitionsComponent implements OnDestroy {
     },
     { field: 'Subscribe?', cellRenderer: SubscribeButtonRenderer, cellRendererParams: {
       clicked: (comp: Comp) => {
-        console.log(comp);
+        this.sendCompNotification(comp, SubscribeButtonRenderer.isCompSubscribed(comp) ? 'Subscribed' : 'Unsubscribed');
       }
     } },
   ];
@@ -151,9 +153,7 @@ export class CompetitionsComponent implements OnDestroy {
   constructor(
     private compService: CompService,
   ) { 
-    
-  let promise = Notification.requestPermission();
-  promise.then(t => console.log(t));
+    Notification.requestPermission().then(response => console.log(`Notification permission request: ${response}`));
   }
 
   ngOnDestroy(): void {
@@ -187,6 +187,7 @@ export class CompetitionsComponent implements OnDestroy {
     this.intervals.push(setInterval(() => {
       this.getAllRows().forEach(comp => {
         comp.update();
+        this.handleCompStatusUpdate(comp);
         event.api.applyTransaction({update: [comp]});
       })
       event.api.refreshCells();
@@ -194,6 +195,7 @@ export class CompetitionsComponent implements OnDestroy {
     this.intervals.push(setInterval((async () => {
       this.getAllRows().filter(comp => comp.durationLeft > 0 && comp.durationLeft < comp.duration && !comp.playerCompleted).forEach(async comp => {
         let updatedComp = await this.compService.getComp(comp.id).toPromise();
+        updatedComp.update();
         event.api.applyTransaction({update: [updatedComp]});
       });
     }), 5000));
@@ -203,5 +205,19 @@ export class CompetitionsComponent implements OnDestroy {
     let rowData = [] as Comp[];
     this.gridAPI.forEachNode(node => rowData.push(node.data));
     return rowData;
+  }
+
+  handleCompStatusUpdate(comp: Comp) {
+    const currentStatus = comp.status;
+    const previousStatus = this.compStatuses.get(comp.id);
+    this.compStatuses.set(comp.id, currentStatus);
+    if(previousStatus && previousStatus !== currentStatus && SubscribeButtonRenderer.isCompSubscribed(comp)) {
+      this.sendCompNotification(comp, comp.status.toString())
+    }
+  }
+
+  sendCompNotification(comp: Comp, status: string) {
+    const notification = new Notification(`${comp.city} competition: ${status}`);
+    notification.onclick = (event) => console.log(`Notification clicked`, comp, status, event);
   }
 }

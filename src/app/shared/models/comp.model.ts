@@ -2,10 +2,10 @@ import { CityDictionary } from "../data/static-city.data";
 import { StaticResourceData } from "../data/static-resource.data";
 
 export enum CompStatus {
-  Waiting,
-  Started,
-  Expired,
-  Complete,
+  Waiting = 'Not Started',
+  Started = 'Started',
+  Expired = 'Expired',
+  Complete = 'Finished',
 }
 
 export class Comp {
