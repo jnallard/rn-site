@@ -2,6 +2,7 @@ import * as e from "express";
 import { StaticResourceData } from "../shared/data/static-resource.data";
 import { CityTransportResponse } from "../shared/models/city-transport-response.model";
 import { Resource } from "../shared/models/resource.model";
+import { Train } from "../shared/models/train.model";
 import { CityUtilComponent } from "./city-util.component";
 
 export class RequiredGood {
@@ -17,6 +18,7 @@ export class RequiredGood {
   playerRank: number;
   isPaxAndComplete: boolean;
   prestige: number = null;
+  trains: Train[] = [];
 
   get isDeliveredByPlayer() {
     return this.prestige > 0 && !this.isPaxAndComplete
@@ -36,6 +38,7 @@ export class RequiredGood {
     this.isPaxAndComplete = resource.ResourceId === 49 && resource.LastAmount === resource.Limit;
     this.myRank = resource.PositionOfPlayer;
   }
+
   setPrestige(response: CityTransportResponse, userId: string) {
     this.cityTransportResponse = response;
     const results = response?.Result ?? [];
@@ -76,5 +79,9 @@ export class RequiredGood {
     }
 
     return Math.round(bestRatio * 100) / 100;
-  };
+  }
+
+  setTrains(trains: Train[]) {
+    this.trains = trains;
+  }
 }

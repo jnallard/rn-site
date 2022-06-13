@@ -4,10 +4,11 @@ import { ConfirmationModalComponent } from '../shared/components/confirmation-mo
 import { IdsSelectorComponent } from '../shared/components/ids-selector/ids-selector.component';
 import { StaticCityData } from '../shared/data/static-city.data';
 import { CityTransportResponse } from '../shared/models/city-transport-response.model';
-import { AccountService } from '../shared/services/account.service';
+import { Train } from '../shared/models/train.model';
 import { CityService } from '../shared/services/city.service';
 import { ModalService } from '../shared/services/modal.service';
 import { SettingsService } from '../shared/services/settings.service';
+import { TrainService } from '../shared/services/train.service';
 import { City } from './city.model';
 
 enum SortMode {
@@ -32,7 +33,12 @@ export class CityUtilComponent implements OnInit {
   private lastConsumptionTime: Date;
   timeBeforeConsumption = '';
 
-  constructor(private cityService: CityService, private modalService: ModalService, public settings: SettingsService, private accountService: AccountService) { }
+  constructor(
+    private cityService: CityService,
+    private modalService: ModalService,
+    public settings: SettingsService,
+    private trainService: TrainService
+  ) { }
 
   SortMode = SortMode;
   _sortMode = localStorage.getItem('cities.sortMode') as SortMode ?? SortMode.Alpha;
@@ -63,11 +69,13 @@ export class CityUtilComponent implements OnInit {
   }
   
   @ViewChild(IdsSelectorComponent)
-  private idSelector: IdsSelectorComponent
+  private idSelector: IdsSelectorComponent;
 
   visibleCities: City[] = [];
 
   cities: City[] = StaticCityData.getAllCities(this.settings.serverInfo).map(city => new City(city.name, city.id));
+
+  trains: Train[];
 
   ngOnInit(): void {
     CityUtilComponent.BestPPRatio = -1;
@@ -86,7 +94,11 @@ export class CityUtilComponent implements OnInit {
       const minutes = Math.floor(secondsLeft / 60);
       const seconds = Math.floor(secondsLeft % 60);
       this.timeBeforeConsumption = `${minutes}m ${seconds}s`;
-    });
+    }, 100);
+  }
+
+  async loadTrains(userId: string) {
+    this.trains = await this.trainService.getTrainGoodsForCities(userId).toPromise();
   }
 
   private async loadCity(city: City, errors: string[]) {
@@ -96,6 +108,10 @@ export class CityUtilComponent implements OnInit {
       city.setCityResponse(cityResponse);
       let tasks = [] as Promise<CityTransportResponse>[];
       for (let rg of city.allRgs) {
+        const trainsForRgInCity = this.trains.filter(
+          train => train.schedule.some(sched => sched.unloadedResource === rg.name && sched.city.id === city.id)
+        );
+        rg.setTrains(trainsForRgInCity);
         tasks.push(
           this.cityService.getCityPrestigeForResource(city.id, rg.id, rg.myRank)
             .pipe(tap(prestigeResponse => rg.setPrestige(prestigeResponse, CityUtilComponent.CurrentId))).
@@ -119,6 +135,7 @@ export class CityUtilComponent implements OnInit {
 
   async loadSingleCity(city: City) {
     let errors: string[] = [];
+    await this.loadTrains(CityUtilComponent.CurrentId);
     await this.loadCity(city, errors);
     await new Promise(resolve => setTimeout(resolve, 100));
     this.sortCities();
@@ -141,7 +158,9 @@ export class CityUtilComponent implements OnInit {
       this.modalService.open(ConfirmationModalComponent, `You must select only one player.`);
       return;
     }
-    CityUtilComponent.CurrentId = players[0].id;
+    const playerId = players[0].id;
+    CityUtilComponent.CurrentId = playerId;
+    await this.loadTrains(playerId);
     await this.loadStartingCities();
 
     this.visibleCities = this.cities.filter(city => city.selected);

@@ -18,11 +18,15 @@
     <div id="rg-ranks">
       <div *ngFor="let rg of city.rgs" class="rank-row">
         <small *ngIf="rg.isDeliveredByPlayer" class="badge rounded-pill rank" [ngClass]="getRankClass(rg.playerRank)">#{{rg.playerRank}} ({{rg.prestige}}pp)</small>
-        <small class="ml-1 badge rounded-pill ppRatio" [style.opacity]="getPPRatioOpacity(rg)">{{getPPRatio(rg)}}pp/L</small>
+        <small class="ml-1 badge rounded-pill ppRatio" [style.color]="getPPRatioColor(rg)" [style.opacity]="getPPRatioOpacity(rg)" [tooltip]="getTooltip(rg)">
+          {{getPPRatio(rg)}}pp/L
+        </small>
       </div>
       <div *ngIf="city.paxRg as rg" class="rank-row pax-row">
         <small *ngIf="rg.isDeliveredByPlayer" class="badge rounded-pill rank last" [ngClass]="getRankClass(rg.playerRank)">#{{rg.playerRank}} ({{rg.prestige}}pp)</small>
-        <small class="ml-1 badge rounded-pill ppRatio" [style.opacity]="getPPRatioOpacity(rg)">{{getPPRatio(rg)}}pp/L</small>
+        <small class="ml-1 badge rounded-pill ppRatio" [style.color]="getPPRatioColor(rg)" [style.opacity]="getPPRatioOpacity(rg)" [tooltip]="getTooltip(rg)">
+          {{getPPRatio(rg)}}pp/L
+        </small>
       </div>
     </div>
   </div>

@@ -205,7 +205,15 @@ export class RgChartComponent implements OnInit {
 
 
   getPPRatioOpacity(rg: RequiredGood) {
-    return Math.max(rg.getBestTonnagePrestigeRatio(CityUtilComponent.CurrentId) / CityUtilComponent.BestPPRatio, 0.15);
+    return Math.max(rg.getBestTonnagePrestigeRatio(CityUtilComponent.CurrentId) / CityUtilComponent.BestPPRatio, 0.3);
+  }
+
+  getPPRatioColor(rg: RequiredGood) {
+    return rg.trains.length > 0 ? 'green' : 'purple';
+  }
+
+  getTooltip(rg: RequiredGood) {
+    return rg.trains.length > 0 ? rg.trains.map(train => train.name).join(', ') : 'No trains scheduled for this RG';
   }
 
 }
